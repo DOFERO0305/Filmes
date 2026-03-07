@@ -6,27 +6,40 @@
     <title>Trailers360 | Filmes e Séries</title>
     
     <meta property="og:title" content="Trailers360 | Filmes e Séries">
-    <meta property="og:description" content="Descobre os melhores lançamentos, sinopses e trailers oficais.">
+    <meta property="og:description" content="Descobre os melhores lançamentos, sinopses e trailers oficiais.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1200">
-    <meta property="og:url" content="https://o-teu-link-aqui.com">
-    <meta property="og:type" content="website">
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Variáveis de Cor (Modo Escuro Padrão) */
         :root {
-            --primary: #e50914; --bg: #141414; --surface: #2f2f2f;
-            --text: #ffffff; --text-meta: #aaaaaa; --radius-md: 8px;
+            --primary: #e50914; 
+            --bg: #141414; 
+            --surface: #2f2f2f;
+            --text: #ffffff; 
+            --text-meta: #aaaaaa; 
+            --radius-md: 8px;
+            --border: #333;
+        }
+
+        /* Variáveis de Cor (Modo Claro) */
+        body.light-mode {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-meta: #64748b;
+            --border: #e2e8f0;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
         
         /* Navbar */
-        .navbar { position: sticky; top: 0; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); z-index: 100; padding: 15px 20px; border-bottom: 1px solid #333; }
+        .navbar { position: sticky; top: 0; background: var(--bg); opacity: 0.98; z-index: 100; padding: 15px 20px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         
-        .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; }
+        .menu-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; margin-right: 15px; transition: 0.3s; }
         .logo-container { display: flex; align-items: center; cursor: pointer; }
         .logo { font-weight: 800; font-size: 1.8rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
         .logo span { color: var(--primary); }
@@ -35,85 +48,79 @@
 
         /* Menu Lateral (Sidebar) */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: none; opacity: 0; transition: 0.3s; }
-        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #1a1a1a; z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: var(--bg); z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 5px 0 15px rgba(0,0,0,0.2); border-right: 1px solid var(--border); }
         .sidebar.open { left: 0; }
-        .sidebar-close { align-self: flex-end; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; }
-        .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 20px; }
+        .sidebar-close { align-self: flex-end; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; }
+        .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 20px; }
         .sidebar h3:first-of-type { margin-top: 0; }
-        .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: white; padding: 12px 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
+        .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 12px 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
-        .sidebar-footer { margin-top: auto; font-size: 0.8rem; color: var(--text-meta); text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.5; }
+        .sidebar-footer { margin-top: auto; font-size: 0.8rem; color: var(--text-meta); text-align: center; border-top: 1px solid var(--border); padding-top: 15px; line-height: 1.5; }
 
-        /* Sub-menu expansível para os anos */
-        .dropdown-content { display: none; padding-left: 15px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 10px; }
+        /* Sub-menu expansível para os anos (com scroll se houver muitos) */
+        .dropdown-content { display: none; padding-left: 15px; background: rgba(128,128,128,0.1); border-radius: 8px; margin-bottom: 10px; max-height: 250px; overflow-y: auto; }
         .dropdown-content .side-cat { font-size: 0.9rem; padding: 10px; }
 
         /* Pesquisa e Filtros */
         #search-section { margin: 20px auto; max-width: 800px; position: relative; padding: 0 20px; }
-        .search-bar input { width: 100%; padding: 14px 20px 14px 50px; border-radius: 100px; border: none; background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; outline: none; }
+        .search-bar input { width: 100%; padding: 14px 20px 14px 50px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; outline: none; }
         .search-bar i { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
 
         .categories { display: flex; gap: 15px; padding: 10px 20px; overflow-x: auto; max-width: 1200px; margin: 0 auto; scrollbar-width: none; align-items: center; }
         .categories::-webkit-scrollbar { display: none; }
-        .cat-item { padding: 8px 20px; background: var(--surface); border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
-        .cat-item.active { background: var(--primary); color: white; }
+        .cat-item { padding: 8px 20px; background: var(--surface); border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; border: 1px solid var(--border); }
+        .cat-item.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Grid de Filmes e Estado Vazio */
+        /* Grid de Filmes */
         .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; min-height: 400px; }
         @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
-        .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; }
+        .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .movie-card:hover { transform: scale(1.05); }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .movie-rating { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #facc15; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
         
         .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-meta); }
-        .no-results i { font-size: 4rem; color: var(--primary); margin-bottom: 20px; opacity: 0.8; }
-        .no-results h2 { font-size: 1.5rem; color: white; margin-bottom: 10px; }
 
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 10px; }
-        .modal-content { background: var(--bg); max-width: 800px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 95vh; overflow-y: auto; }
+        .modal-content { background: var(--bg); max-width: 800px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 95vh; overflow-y: auto; border: 1px solid var(--border); }
         .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10; }
         
-        .modal-backdrop { width: 100%; height: 350px; object-fit: cover; opacity: 0.4; }
+        .modal-backdrop { width: 100%; height: 350px; object-fit: cover; opacity: 0.6; }
         .modal-info { padding: 25px; position: relative; margin-top: -100px; }
-        .modal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); color: white; }
         .modal-meta { color: var(--text-meta); font-size: 0.95rem; margin-bottom: 15px; display: flex; gap: 15px; }
-        .modal-overview { font-size: 1.05rem; line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+        .modal-overview { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; color: var(--text); }
 
-        /* Secção Elenco */
-        .cast-section { margin-bottom: 25px; }
+        /* Secções de Modal */
+        .cast-section, #trailer-section, #related-section { margin-bottom: 25px; }
         .cast-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .cast-item { min-width: 90px; text-align: center; }
-        .cast-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--surface); background: #444; }
-        .cast-name { font-size: 0.8rem; font-weight: 600; color: #ddd; line-height: 1.2; }
+        .cast-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--surface); background: var(--border); }
+        .cast-name { font-size: 0.8rem; font-weight: 600; color: var(--text); line-height: 1.2; }
         
-        /* Trailer e Relacionados */
-        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
-        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 20px; background: #000; border-radius: var(--radius-md); overflow: hidden; }
+        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; color: var(--text); }
+        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: var(--radius-md); overflow: hidden; }
         .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* Botões Sociais */
-        .action-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: var(--radius-md); }
+        .action-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; background: rgba(128,128,128,0.1); padding: 15px; border-radius: var(--radius-md); }
         .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; min-width: 130px; }
         .btn-watch { background: var(--primary); color: white; text-decoration: none; display: none; }
-        .btn-watch:hover { background: #b80710; }
-        .btn-icon { background: var(--surface); color: white; }
-        .btn-icon:hover { background: #444; }
+        .btn-icon { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
         .btn-icon.liked { color: #e11d48; }
 
         .related-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
-        .related-card { min-width: 130px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
+        .related-card { min-width: 130px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; border: 1px solid var(--border); }
         .related-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
 
-        /* WhatsApp Animado e Pesquisa Flutuante */
+        /* WhatsApp Animado e Flutuantes */
         .whatsapp-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 10px; }
         .wa-tooltip { background: white; color: black; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; position: relative; opacity: 1; transition: opacity 0.5s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wa-tooltip::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); border-width: 6px 0 6px 6px; border-style: solid; border-color: transparent transparent transparent white; }
         .wa-tooltip.hide { opacity: 0; pointer-events: none; }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
         .whatsapp-float { background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; animation: pulse 2s infinite; }
-        .float-search { position: fixed; bottom: 20px; left: 20px; background: var(--surface); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; text-decoration: none; }
+        .float-search { position: fixed; bottom: 20px; left: 20px; background: var(--surface); color: var(--text); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; text-decoration: none; }
         .float-search.show { opacity: 1; pointer-events: auto; }
         .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
     </style>
@@ -129,12 +136,7 @@
     
     <button class="side-cat" onclick="toggleDropdown('yearDropdown')"><i class="fas fa-calendar-alt"></i> Lançamentos <i class="fas fa-chevron-down" style="float: right; margin-top: 4px;"></i></button>
     <div id="yearDropdown" class="dropdown-content">
-        <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2025', this)">2025</button>
-        <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2024', this)">2024</button>
-        <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2023', this)">2023</button>
-        <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2022', this)">2022</button>
-        <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2021', this)">2021</button>
-    </div>
+        </div>
 
     <h3><i class="fas fa-film"></i> Géneros</h3>
     <button class="side-cat" onclick="setGenre(28, this)"><i class="fas fa-car-crash"></i> Ação</button>
@@ -155,7 +157,10 @@
             <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <div class="logo" onclick="resetHome()">Trailers<span>360</span></div>
         </div>
-        <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">Minha Lista</button>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button class="menu-btn" onclick="toggleTheme()" title="Mudar Tema"><i id="theme-icon" class="fas fa-sun"></i></button>
+            <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">Minha Lista</button>
+        </div>
     </div>
 </nav>
 
@@ -205,7 +210,7 @@
             </div>
 
             <div id="related-section" style="display: none;">
-                <h3 class="section-title">Títulos Relacionados</h3>
+                <h3 class="section-title">Títulos Semelhantes</h3>
                 <div class="related-list" id="m-related"></div>
             </div>
         </div>
@@ -238,6 +243,26 @@ let currentPage = 1;
 let isFetching = false;
 let currentQuery = '';
 
+// Gera os botões de Anos de 1990 a 2026 automaticamente!
+function gerarAnos() {
+    const dropdown = document.getElementById('yearDropdown');
+    dropdown.innerHTML = '';
+    for (let ano = 2026; ano >= 1990; ano--) {
+        dropdown.innerHTML += `<button class="side-cat" onclick="setAdvancedFilter('primary_release_year=${ano}', this)">${ano}</button>`;
+    }
+}
+
+// Lógica do Tema Claro/Escuro
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const icon = document.getElementById('theme-icon');
+    if(document.body.classList.contains('light-mode')) {
+        icon.className = 'fas fa-moon'; // Mostra a lua se já estiver claro
+    } else {
+        icon.className = 'fas fa-sun'; // Mostra o sol se já estiver escuro
+    }
+}
+
 setTimeout(() => { document.getElementById('wa-tooltip').classList.add('hide'); }, 5000);
 
 window.onscroll = function() {
@@ -260,14 +285,9 @@ function toggleSidebar() {
     }
 }
 
-// Lógica para abrir/fechar a lista de Anos
 function toggleDropdown(id) {
     const el = document.getElementById(id);
-    if (el.style.display === "block") {
-        el.style.display = "none";
-    } else {
-        el.style.display = "block";
-    }
+    el.style.display = (el.style.display === "block") ? "none" : "block";
 }
 
 function resetHome() {
@@ -330,7 +350,11 @@ function renderGrid(items, clear = false) {
 }
 
 const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
-window.onload = () => { observer.observe(document.getElementById('loader')); fetchContent(); };
+window.onload = () => { 
+    gerarAnos(); // Chama a função para criar os anos ao carregar a página
+    observer.observe(document.getElementById('loader')); 
+    fetchContent(); 
+};
 
 function clearActiveButtons() {
     document.querySelectorAll('.cat-item, .side-cat').forEach(i => i.classList.remove('active'));
@@ -370,7 +394,7 @@ async function openModal(item) {
     document.getElementById('m-backdrop').src = item.backdrop_path ? (IMG_URL + item.backdrop_path) : (IMG_URL + item.poster_path);
     document.getElementById('m-date').innerHTML = `<i class="far fa-calendar"></i> ${date.split('-')[0]}`;
     document.getElementById('m-rate').innerHTML = `<i class="fas fa-star" style="color:#facc15"></i> ${item.vote_average.toFixed(1)}`;
-    document.getElementById('m-desc').innerText = item.overview || "Nenhuma sinopse disponível.";
+    document.getElementById('m-desc').innerText = item.overview || "Nenhuma sinopse disponível em português para este título.";
     
     const watchBtn = document.getElementById('m-watch-btn');
     watchBtn.style.display = 'none';
@@ -386,27 +410,21 @@ async function openModal(item) {
         const castData = await castRes.json();
         const castContainer = document.getElementById('m-cast');
         castContainer.innerHTML = '';
-        
         if(castData.cast && castData.cast.length > 0) {
             castData.cast.slice(0, 5).forEach(actor => {
                 if(actor.profile_path) {
-                    castContainer.innerHTML += `
-                        <div class="cast-item">
-                            <img src="${IMG_URL + actor.profile_path}" class="cast-img" alt="${actor.name}">
-                            <div class="cast-name">${actor.name}</div>
-                        </div>`;
+                    castContainer.innerHTML += `<div class="cast-item"><img src="${IMG_URL + actor.profile_path}" class="cast-img"><div class="cast-name">${actor.name}</div></div>`;
                 }
             });
             document.getElementById('cast-section').style.display = 'block';
-        } else {
-            document.getElementById('cast-section').style.display = 'none';
-        }
+        } else { document.getElementById('cast-section').style.display = 'none'; }
     } catch(e) { document.getElementById('cast-section').style.display = 'none'; }
 
     updateActionBtns();
     document.getElementById('modal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
+    // A Mágica de Recuperação!
     fetchTrailerAndRelated(type, item.id);
 }
 
@@ -424,19 +442,34 @@ function partilharConteudo() {
 }
 
 async function fetchTrailerAndRelated(type, id) {
+    // Busca do Trailer com Plano B (Se falhar em PT, procura em Inglês)
     try {
         let vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=pt-BR`);
         let vidData = await vidRes.json();
-        const trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
+        let trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
+        
+        if(!trailer) { // O Plano B entra em ação aqui
+            vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`);
+            vidData = await vidRes.json();
+            trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
+        }
+
         if(trailer && trailer.key) {
             document.getElementById('m-trailer').innerHTML = `<iframe src="https://www.youtube.com/embed/${trailer.key}?autoplay=0" allowfullscreen></iframe>`;
             document.getElementById('trailer-section').style.display = 'block';
         } else { document.getElementById('trailer-section').style.display = 'none'; }
-    } catch(e) {}
+    } catch(e) { document.getElementById('trailer-section').style.display = 'none'; }
 
+    // Busca de Relacionados com Plano B (Se não houver recomendações, procura similares)
     try {
-        const relRes = await fetch(`${BASE_URL}/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
-        const relData = await relRes.json();
+        let relRes = await fetch(`${BASE_URL}/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
+        let relData = await relRes.json();
+        
+        if(!relData.results || relData.results.length === 0) { // O Plano B entra em ação aqui
+            relRes = await fetch(`${BASE_URL}/${type}/${id}/similar?api_key=${API_KEY}&language=pt-BR`);
+            relData = await relRes.json();
+        }
+
         const relContainer = document.getElementById('m-related');
         relContainer.innerHTML = '';
         if(relData.results?.length > 0) {
@@ -451,7 +484,7 @@ async function fetchTrailerAndRelated(type, id) {
             });
             document.getElementById('related-section').style.display = 'block';
         } else { document.getElementById('related-section').style.display = 'none'; }
-    } catch(e) {}
+    } catch(e) { document.getElementById('related-section').style.display = 'none'; }
 }
 
 function closeModal(event, force = false) {
@@ -492,7 +525,7 @@ function updateActionBtns() {
     const isSaved = saved.some(x => x.id === selectedItem.id);
     const saveBtn = document.getElementById('m-save-btn');
     if(isSaved) { saveBtn.style.color = '#e50914'; saveBtn.innerHTML = '<i class="fas fa-bookmark"></i>'; } 
-    else { saveBtn.style.color = 'white'; saveBtn.innerHTML = '<i class="far fa-bookmark"></i>'; }
+    else { saveBtn.style.color = 'var(--text)'; saveBtn.innerHTML = '<i class="far fa-bookmark"></i>'; }
 }
 </script>
 </body>
