@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trailers360 | Filmes e Séries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e50914; --bg: #141414; --surface: #2f2f2f;
+            --text: #ffffff; --text-meta: #aaaaaa; --radius-md: 8px;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        
+        /* Navbar */
+        .navbar { position: sticky; top: 0; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); z-index: 100; padding: 15px 20px; border-bottom: 1px solid #333; }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .logo { font-weight: 800; font-size: 1.8rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+        .btn-saved { background: transparent; border: 1px solid var(--text); color: var(--text); padding: 8px 16px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-saved.active { background: var(--text); color: var(--bg); }
+
+        /* Pesquisa e Filtros */
+        .search-bar { margin: 20px auto; max-width: 800px; position: relative; padding: 0 20px; }
+        .search-bar input { width: 100%; padding: 14px 20px 14px 50px; border-radius: 100px; border: none; background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; outline: none; }
+        .search-bar i { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
+
+        .categories { display: flex; gap: 15px; padding: 10px 20px; overflow-x: auto; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-item { padding: 8px 20px; background: var(--surface); border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .cat-item.active { background: var(--primary); color: white; }
+
+        /* Grid de Filmes */
+        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+        .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; }
+        .movie-card:hover { transform: scale(1.05); }
+        .movie-poster { width: 100%; height: 100%; object-fit: cover; }
+        .movie-rating { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #facc15; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+
+        /* Modal Melhorado com Interações */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 10px; }
+        .modal-content { background: var(--bg); max-width: 800px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 95vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10; }
+        
+        .modal-backdrop { width: 100%; height: 350px; object-fit: cover; opacity: 0.4; }
+        .modal-info { padding: 25px; position: relative; margin-top: -100px; }
+        .modal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-meta { color: var(--text-meta); font-size: 0.95rem; margin-bottom: 15px; display: flex; gap: 15px; }
+        .modal-overview { font-size: 1.05rem; line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+        
+        /* Botões Sociais e Assistir */
+        .action-row { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; min-width: 140px; }
+        .btn-watch { background: var(--primary); color: white; text-decoration: none; }
+        .btn-watch:hover { background: #b80710; }
+        .btn-icon { background: var(--surface); color: white; flex: none; width: 45px; }
+        .btn-icon:hover { background: #444; }
+        .btn-icon.liked { color: #e11d48; }
+
+        /* Trailer e Relacionados */
+        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 30px; background: #000; border-radius: var(--radius-md); overflow: hidden; }
+        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .related-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
+        .related-card { min-width: 130px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
+        .related-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+
+        /* Componentes Novos: WhatsApp e Rodapé */
+        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; transition: transform 0.2s; }
+        .whatsapp-float:hover { transform: scale(1.1); }
+        footer { text-align: center; padding: 25px 20px; color: var(--text-meta); border-top: 1px solid #333; margin-top: 40px; font-size: 0.9rem; }
+        
+        .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-top">
+        <a href="#" class="logo">Trailers<span>360</span></a>
+        <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">Minha Lista</button>
+    </div>
+</nav>
+
+<div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input type="text" id="search-input" placeholder="Pesquisar filmes ou séries..." onkeyup="if(event.key==='Enter') startSearch()">
+</div>
+
+<div class="categories">
+    <div class="cat-item active" onclick="setCategory('trending/all/week', this)">Em Alta</div>
+    <div class="cat-item" onclick="setGenre(28, this)">Ação</div>
+    <div class="cat-item" onclick="setGenre(35, this)">Comédia</div>
+    <div class="cat-item" onclick="setGenre(27, this)">Terror</div>
+    <div class="cat-item" onclick="setGenre(16, this)">Animação</div>
+</div>
+
+<main class="feed" id="feed"></main>
+<div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i></div>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal(event, true)"><i class="fas fa-times"></i></button>
+        <img id="m-backdrop" class="modal-backdrop" src="" alt="">
+        <div class="modal-info">
+            <h2 id="m-title" class="modal-title">Título</h2>
+            <div class="modal-meta">
+                <span id="m-date"><i class="far fa-calendar"></i> 2024</span>
+                <span id="m-rate"><i class="fas fa-star" style="color:#facc15"></i> 8.5</span>
+            </div>
+            
+            <div class="action-row">
+                <a id="m-watch-btn" href="#" target="_blank" class="btn-action btn-watch"><i class="fas fa-play"></i> Assistir Oficial</a>
+                <button id="m-like-btn" class="btn-action btn-icon" onclick="toggleLike()" title="Gostar"><i class="far fa-heart"></i></button>
+                <button class="btn-action btn-icon" onclick="partilharConteudo()" title="Partilhar"><i class="fas fa-share-alt"></i></button>
+                <button id="m-save-btn" class="btn-action btn-icon" onclick="toggleSave()" title="Guardar"><i class="fas fa-bookmark"></i></button>
+            </div>
+
+            <p id="m-desc" class="modal-overview">Sinopse...</p>
+            
+            <div id="trailer-section" style="display: none;">
+                <h3 class="section-title">Trailer Oficial</h3>
+                <div class="trailer-container" id="m-trailer"></div>
+            </div>
+
+            <div id="related-section" style="display: none;">
+                <h3 class="section-title">Títulos Relacionados</h3>
+                <div class="related-list" id="m-related"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="https://wa.me/258849085157?text=Olá!%20Tenho%20um%20pedido%20ou%20dúvida%20sobre%20o%20Trailers360." class="whatsapp-float" target="_blank" title="Fazer pedido no WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<footer>
+    <strong>Trailers360</strong> &copy; 2026<br>
+    Criado Por Donaldo Fernando Rodrigues
+</footer>
+
+<script>
+const API_KEY = 'a2144f612724d5f4a8a14c4a9ac78f7a'; 
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+
+let currentEndpoint = 'trending/all/week';
+let currentGenre = '';
+let allItems = [];
+let isSavedView = false;
+let selectedItem = null;
+let currentPage = 1;
+let isFetching = false;
+let currentQuery = '';
+
+async function fetchContent() {
+    if(isSavedView || isFetching) return;
+    isFetching = true;
+    document.getElementById('loader').style.opacity = '1';
+
+    try {
+        let url = '';
+        if (currentQuery) {
+            url = `${BASE_URL}/search/multi?api_key=${API_KEY}&language=pt-BR&query=${encodeURIComponent(currentQuery)}&page=${currentPage}`;
+        } else if (currentGenre) {
+            url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=${currentGenre}&page=${currentPage}`;
+        } else {
+            url = `${BASE_URL}/${currentEndpoint}?api_key=${API_KEY}&language=pt-BR&page=${currentPage}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if(data.results && data.results.length > 0) {
+            const validItems = data.results.filter(item => item.poster_path);
+            allItems = currentPage === 1 ? validItems : [...allItems, ...validItems];
+            renderGrid(validItems, currentPage === 1);
+            currentPage++;
+        }
+    } catch (e) { console.error("Erro ao carregar."); }
+    
+    isFetching = false;
+    document.getElementById('loader').style.opacity = '0';
+}
+
+function renderGrid(items, clear = false) {
+    const feed = document.getElementById('feed');
+    if(clear) feed.innerHTML = '';
+    
+    items.forEach(item => {
+        const title = item.title || item.name;
+        const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+        const card = document.createElement('div');
+        card.className = 'movie-card';
+        card.onclick = () => openModal(item);
+        card.innerHTML = `<img class="movie-poster" src="${IMG_URL + item.poster_path}" loading="lazy"><div class="movie-rating"><i class="fas fa-star"></i> ${rating}</div>`;
+        feed.appendChild(card);
+    });
+}
+
+const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
+window.onload = () => { observer.observe(document.getElementById('loader')); fetchContent(); };
+
+// Nova Função para Géneros (Ação, Comédia, etc)
+function setGenre(genreId, btn) {
+    document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+    btn.classList.add('active');
+    currentGenre = genreId;
+    currentQuery = '';
+    isSavedView = false;
+    currentPage = 1;
+    fetchContent();
+}
+
+function setCategory(endpoint, btn) {
+    document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+    btn.classList.add('active');
+    currentEndpoint = endpoint;
+    currentGenre = '';
+    currentQuery = '';
+    isSavedView = false;
+    currentPage = 1;
+    fetchContent();
+}
+
+function startSearch() {
+    const query = document.getElementById('search-input').value;
+    if(query.trim()) { currentQuery = query; currentGenre = ''; currentPage = 1; fetchContent(); }
+}
+
+async function openModal(item) {
+    selectedItem = item;
+    const title = item.title || item.name;
+    const date = item.release_date || item.first_air_date || 'N/D';
+    
+    document.getElementById('m-title').innerText = title;
+    document.getElementById('m-backdrop').src = item.backdrop_path ? (IMG_URL + item.backdrop_path) : (IMG_URL + item.poster_path);
+    document.getElementById('m-date').innerHTML = `<i class="far fa-calendar"></i> ${date.split('-')[0]}`;
+    document.getElementById('m-rate').innerHTML = `<i class="fas fa-star" style="color:#facc15"></i> ${item.vote_average.toFixed(1)}`;
+    document.getElementById('m-desc').innerText = item.overview || "Nenhuma sinopse disponível.";
+    
+    // Configura o link de Assistir Oficial (pesquisa no Google como reserva)
+    document.getElementById('m-watch-btn').href = `https://www.themoviedb.org/${item.media_type || 'movie'}/${item.id}/watch`;
+
+    updateActionBtns();
+    
+    document.getElementById('modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    let type = item.media_type || (currentEndpoint.includes('tv') ? 'tv' : 'movie');
+    fetchTrailerAndRelated(type, item.id);
+}
+
+// Funções de Interação Sociais
+function toggleLike() {
+    const btn = document.getElementById('m-like-btn');
+    const icon = btn.querySelector('i');
+    btn.classList.toggle('liked');
+    
+    if(btn.classList.contains('liked')) {
+        icon.className = 'fas fa-heart'; // Coração preenchido
+    } else {
+        icon.className = 'far fa-heart'; // Coração vazio
+    }
+}
+
+function partilharConteudo() {
+    const title = selectedItem.title || selectedItem.name;
+    const url = window.location.href; // Idealmente seria um link direto para o filme
+    
+    if (navigator.share) {
+        navigator.share({ title: `Vê isto no Trailers360: ${title}`, url: url })
+        .catch(console.error);
+    } else {
+        alert(`Link para partilhar ${title} copiado!`);
+    }
+}
+
+async function fetchTrailerAndRelated(type, id) {
+    try {
+        let vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=pt-BR`);
+        let vidData = await vidRes.json();
+        const trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
+        if(trailer && trailer.key) {
+            document.getElementById('m-trailer').innerHTML = `<iframe src="https://www.youtube.com/embed/${trailer.key}?autoplay=0" allowfullscreen></iframe>`;
+            document.getElementById('trailer-section').style.display = 'block';
+        } else { document.getElementById('trailer-section').style.display = 'none'; }
+    } catch(e) {}
+
+    try {
+        const relRes = await fetch(`${BASE_URL}/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
+        const relData = await relRes.json();
+        const relContainer = document.getElementById('m-related');
+        relContainer.innerHTML = '';
+        if(relData.results?.length > 0) {
+            relData.results.slice(0, 10).forEach(rel => {
+                if(rel.poster_path) {
+                    const el = document.createElement('div');
+                    el.className = 'related-card';
+                    el.innerHTML = `<img src="${IMG_URL + rel.poster_path}">`;
+                    el.onclick = () => { closeModal(null, true); openModal(rel); };
+                    relContainer.appendChild(el);
+                }
+            });
+            document.getElementById('related-section').style.display = 'block';
+        } else { document.getElementById('related-section').style.display = 'none'; }
+    } catch(e) {}
+}
+
+function closeModal(event, force = false) {
+    if (force || event.target.id === 'modal') {
+        document.getElementById('modal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.getElementById('m-trailer').innerHTML = ''; 
+        // Reseta o botão de gosto
+        const likeBtn = document.getElementById('m-like-btn');
+        likeBtn.classList.remove('liked');
+        likeBtn.querySelector('i').className = 'far fa-heart';
+    }
+}
+
+function toggleSave() {
+    let saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
+    const idx = saved.findIndex(x => x.id === selectedItem.id);
+    if(idx > -1) saved.splice(idx, 1);
+    else saved.push(selectedItem);
+    localStorage.setItem('cld_flix_saved', JSON.stringify(saved));
+    updateActionBtns();
+    if(isSavedView) renderGrid(saved, true);
+}
+
+function toggleSavedView() {
+    isSavedView = !isSavedView;
+    document.getElementById('bookmark-btn').classList.toggle('active', isSavedView);
+    if(isSavedView) {
+        const saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
+        document.getElementById('loader').style.display = 'none';
+        renderGrid(saved, true);
+    } else {
+        document.getElementById('loader').style.display = 'block';
+        currentPage = 1; fetchContent();
+    }
+}
+
+function updateActionBtns() {
+    const saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
+    const isSaved = saved.some(x => x.id === selectedItem.id);
+    const saveBtn = document.getElementById('m-save-btn');
+    if(isSaved) {
+        saveBtn.style.color = '#e50914';
+        saveBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+    } else {
+        saveBtn.style.color = 'white';
+        saveBtn.innerHTML = '<i class="far fa-bookmark"></i>';
+    }
+}
+</script>
+</body>
+</html>
