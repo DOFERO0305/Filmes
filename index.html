@@ -35,29 +35,30 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
         
-        /* Navbar */
+        /* Navbar - Agora mais limpa e espaçada */
         .navbar { position: sticky; top: 0; background: var(--bg); opacity: 0.98; z-index: 100; padding: 15px 20px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         
-        .menu-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; margin-right: 15px; transition: 0.3s; }
-        .logo-container { display: flex; align-items: center; cursor: pointer; }
+        .menu-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
+        .logo-container { display: flex; align-items: center; cursor: pointer; gap: 15px; }
         .logo { font-weight: 800; font-size: 1.8rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
         .logo span { color: var(--primary); }
-        .btn-saved { background: transparent; border: 1px solid var(--text); color: var(--text); padding: 8px 16px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-saved.active { background: var(--text); color: var(--bg); }
 
         /* Menu Lateral (Sidebar) */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: none; opacity: 0; transition: 0.3s; }
-        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: var(--bg); z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 5px 0 15px rgba(0,0,0,0.2); border-right: 1px solid var(--border); }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--bg); z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 5px 0 15px rgba(0,0,0,0.2); border-right: 1px solid var(--border); }
         .sidebar.open { left: 0; }
-        .sidebar-close { align-self: flex-end; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; }
+        .sidebar-close { align-self: flex-end; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; margin-bottom: 10px; }
         .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 20px; }
         .sidebar h3:first-of-type { margin-top: 0; }
         .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 12px 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
-        .sidebar-footer { margin-top: auto; font-size: 0.8rem; color: var(--text-meta); text-align: center; border-top: 1px solid var(--border); padding-top: 15px; line-height: 1.5; }
+        
+        /* Rodapé com Contactos */
+        .sidebar-footer { margin-top: auto; font-size: 0.85rem; color: var(--text-meta); text-align: left; border-top: 1px solid var(--border); padding-top: 15px; line-height: 1.8; }
+        .sidebar-footer i { width: 20px; color: var(--primary); }
 
-        /* Sub-menu expansível para os anos (com scroll se houver muitos) */
+        /* Sub-menu expansível para os anos */
         .dropdown-content { display: none; padding-left: 15px; background: rgba(128,128,128,0.1); border-radius: 8px; margin-bottom: 10px; max-height: 250px; overflow-y: auto; }
         .dropdown-content .side-cat { font-size: 0.9rem; padding: 10px; }
 
@@ -131,6 +132,9 @@
 <div class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
     
+    <h3><i class="fas fa-user"></i> A Minha Conta</h3>
+    <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedViewSidebar()"><i class="fas fa-bookmark"></i> Minha Lista</button>
+
     <h3><i class="fas fa-fire"></i> Explorar</h3>
     <button class="side-cat" onclick="setAdvancedFilter('sort_by=vote_average.desc&vote_count.gte=1000', this)"><i class="fas fa-star"></i> Aclamados</button>
     
@@ -147,7 +151,9 @@
     
     <div class="sidebar-footer">
         <strong>Trailers360</strong> &copy; 2026<br>
-        Criado Por Donaldo Fernando Rodrigues
+        Criado Por Donaldo F. Rodrigues<br><br>
+        <a href="mailto:donald.fer.fer@gmail.com" style="color: var(--text-meta); text-decoration: none;"><i class="fas fa-envelope"></i> donald.fer.fer@gmail.com</a><br>
+        <a href="https://wa.me/258849085157" style="color: var(--text-meta); text-decoration: none;" target="_blank"><i class="fas fa-phone"></i> +258 84 908 5157</a>
     </div>
 </div>
 
@@ -157,10 +163,7 @@
             <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
             <div class="logo" onclick="resetHome()">Trailers<span>360</span></div>
         </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <button class="menu-btn" onclick="toggleTheme()" title="Mudar Tema"><i id="theme-icon" class="fas fa-sun"></i></button>
-            <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">Minha Lista</button>
-        </div>
+        <button class="menu-btn" onclick="toggleTheme()" title="Mudar Tema"><i id="theme-icon" class="fas fa-sun"></i></button>
     </div>
 </nav>
 
@@ -243,7 +246,6 @@ let currentPage = 1;
 let isFetching = false;
 let currentQuery = '';
 
-// Gera os botões de Anos de 1990 a 2026 automaticamente!
 function gerarAnos() {
     const dropdown = document.getElementById('yearDropdown');
     dropdown.innerHTML = '';
@@ -252,14 +254,13 @@ function gerarAnos() {
     }
 }
 
-// Lógica do Tema Claro/Escuro
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     const icon = document.getElementById('theme-icon');
     if(document.body.classList.contains('light-mode')) {
-        icon.className = 'fas fa-moon'; // Mostra a lua se já estiver claro
+        icon.className = 'fas fa-moon';
     } else {
-        icon.className = 'fas fa-sun'; // Mostra o sol se já estiver escuro
+        icon.className = 'fas fa-sun';
     }
 }
 
@@ -351,7 +352,7 @@ function renderGrid(items, clear = false) {
 
 const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
 window.onload = () => { 
-    gerarAnos(); // Chama a função para criar os anos ao carregar a página
+    gerarAnos(); 
     observer.observe(document.getElementById('loader')); 
     fetchContent(); 
 };
@@ -424,7 +425,6 @@ async function openModal(item) {
     document.getElementById('modal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
-    // A Mágica de Recuperação!
     fetchTrailerAndRelated(type, item.id);
 }
 
@@ -442,13 +442,12 @@ function partilharConteudo() {
 }
 
 async function fetchTrailerAndRelated(type, id) {
-    // Busca do Trailer com Plano B (Se falhar em PT, procura em Inglês)
     try {
         let vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=pt-BR`);
         let vidData = await vidRes.json();
         let trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
         
-        if(!trailer) { // O Plano B entra em ação aqui
+        if(!trailer) {
             vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`);
             vidData = await vidRes.json();
             trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
@@ -460,12 +459,11 @@ async function fetchTrailerAndRelated(type, id) {
         } else { document.getElementById('trailer-section').style.display = 'none'; }
     } catch(e) { document.getElementById('trailer-section').style.display = 'none'; }
 
-    // Busca de Relacionados com Plano B (Se não houver recomendações, procura similares)
     try {
         let relRes = await fetch(`${BASE_URL}/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
         let relData = await relRes.json();
         
-        if(!relData.results || relData.results.length === 0) { // O Plano B entra em ação aqui
+        if(!relData.results || relData.results.length === 0) {
             relRes = await fetch(`${BASE_URL}/${type}/${id}/similar?api_key=${API_KEY}&language=pt-BR`);
             relData = await relRes.json();
         }
@@ -507,14 +505,19 @@ function toggleSave() {
     if(isSavedView) renderGrid(saved, true);
 }
 
-function toggleSavedView() {
+// Nova função para a "Minha Lista" no menu lateral
+function toggleSavedViewSidebar() {
+    toggleSidebar(); // Fecha o menu automaticamente
     isSavedView = !isSavedView;
-    document.getElementById('bookmark-btn').classList.toggle('active', isSavedView);
+    const btn = document.getElementById('sidebar-bookmark-btn');
     if(isSavedView) {
+        btn.classList.add('active');
+        clearActiveButtons(); // Limpa os outros botões
         const saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
         document.getElementById('loader').style.display = 'none';
         renderGrid(saved, true);
     } else {
+        btn.classList.remove('active');
         document.getElementById('loader').style.display = 'block';
         currentPage = 1; fetchContent();
     }
