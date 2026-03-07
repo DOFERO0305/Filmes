@@ -12,10 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Variáveis de Cor */
         :root { --primary: #e50914; --bg: #141414; --surface: #2f2f2f; --text: #ffffff; --text-meta: #aaaaaa; --radius-md: 8px; --border: #333; }
         body.light-mode { --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s; top: 0 !important; } /* Fix para Google Translate */
         
         .navbar { position: sticky; top: 0; background: var(--bg); opacity: 0.98; z-index: 100; padding: 15px 20px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
@@ -32,6 +33,7 @@
         .sidebar h3:first-of-type { margin-top: 0; }
         .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 12px 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
+        
         .sidebar-footer { margin-top: auto; font-size: 0.85rem; color: var(--text-meta); text-align: left; border-top: 1px solid var(--border); padding-top: 15px; line-height: 1.8; }
         .sidebar-footer i { width: 20px; color: var(--primary); }
 
@@ -95,6 +97,10 @@
         .float-search { position: fixed; bottom: 20px; left: 20px; background: var(--surface); color: var(--text); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; text-decoration: none; }
         .float-search.show { opacity: 1; pointer-events: auto; }
         .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
+        
+        /* Ajuste do Widget do Google Translate */
+        .goog-te-banner-frame { display: none !important; }
+        #google_translate_element select { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 5px; border-radius: 5px; outline: none; }
     </style>
 </head>
 <body>
@@ -103,6 +109,9 @@
 <div class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
     
+    <h3><i class="fas fa-language"></i> Traduzir Site</h3>
+    <div id="google_translate_element" style="margin-bottom: 15px;"></div>
+
     <h3><i class="fas fa-user"></i> A Minha Conta</h3>
     <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedViewSidebar()"><i class="fas fa-bookmark"></i> Minha Lista</button>
 
@@ -111,13 +120,7 @@
     
     <button class="side-cat" onclick="toggleDropdown('yearDropdown')"><i class="fas fa-calendar-alt"></i> Lançamentos <i class="fas fa-chevron-down" style="float: right; margin-top: 4px;"></i></button>
     <div id="yearDropdown" class="dropdown-content">
-        <script>
-            // Este script carrega os anos imediatamente no HTML
-            for (let ano = 2026; ano >= 1990; ano--) {
-                document.write(`<button class="side-cat" onclick="setAdvancedFilter('primary_release_year=${ano}', this)">${ano}</button>`);
-            }
-        </script>
-    </div>
+        </div>
 
     <h3><i class="fas fa-film"></i> Géneros</h3>
     <button class="side-cat" onclick="setGenre(28, this)"><i class="fas fa-car-crash"></i> Ação</button>
@@ -151,6 +154,7 @@
 
 <div class="categories">
     <div class="cat-item active" onclick="setCategory('trending/all/day', this)">Novos</div>
+    <div class="cat-item" onclick="setCategory('movie/upcoming', this)"><i class="fas fa-clock"></i> Em Breve</div>
     <div class="cat-item" onclick="setCategory('discover/movie', this)">Filmes</div>
     <div class="cat-item" onclick="setCategory('discover/tv', this)">Séries</div>
     <div class="cat-item" onclick="setAdvancedFilter('sort_by=original_title.asc', this)"><i class="fas fa-sort-alpha-down"></i> A-Z</div>
@@ -208,12 +212,18 @@
     </a>
 </div>
 
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'pt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script>
 const API_KEY = 'a2144f612724d5f4a8a14c4a9ac78f7a'; 
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
-// Atualização diária aplicada aqui (trending/all/day)
 let currentEndpoint = 'trending/all/day';
 let currentGenre = '';
 let currentAdvanced = '';
@@ -224,14 +234,20 @@ let currentPage = 1;
 let isFetching = false;
 let currentQuery = '';
 
+// Correção: Agora usamos innerHTML para garantir que os anos aparecem
+function gerarAnos() {
+    const dropdown = document.getElementById('yearDropdown');
+    let anosHTML = '';
+    for (let ano = 2027; ano >= 1990; ano--) {
+        anosHTML += `<button class="side-cat" onclick="setAdvancedFilter('primary_release_year=${ano}', this)">${ano}</button>`;
+    }
+    dropdown.innerHTML = anosHTML;
+}
+
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     const icon = document.getElementById('theme-icon');
-    if(document.body.classList.contains('light-mode')) {
-        icon.className = 'fas fa-moon';
-    } else {
-        icon.className = 'fas fa-sun';
-    }
+    icon.className = document.body.classList.contains('light-mode') ? 'fas fa-moon' : 'fas fa-sun';
 }
 
 setTimeout(() => { document.getElementById('wa-tooltip').classList.add('hide'); }, 5000);
@@ -322,6 +338,7 @@ function renderGrid(items, clear = false) {
 
 const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
 window.onload = () => { 
+    gerarAnos(); // Cria os anos logo que a página abre
     observer.observe(document.getElementById('loader')); 
     fetchContent(); 
 };
@@ -411,15 +428,17 @@ function partilharConteudo() {
 }
 
 async function fetchTrailerAndRelated(type, id) {
+    // 1. Tenta buscar em Português
     try {
         let vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=pt-BR`);
         let vidData = await vidRes.json();
         let trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
         
+        // 2. Se falhar (vazio), tenta buscar sem idioma (Inglês ou original)
         if(!trailer) {
-            vidRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`);
-            vidData = await vidRes.json();
-            trailer = vidData.results?.find(v => v.type === 'Trailer') || vidData.results?.[0];
+            let fallbackRes = await fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`);
+            let fallbackData = await fallbackRes.json();
+            trailer = fallbackData.results?.find(v => v.type === 'Trailer') || fallbackData.results?.[0];
         }
 
         if(trailer && trailer.key) {
