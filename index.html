@@ -28,11 +28,12 @@
 
         /* Menu Lateral (Sidebar) */
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: none; opacity: 0; transition: 0.3s; }
-        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #1a1a1a; z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #1a1a1a; z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
         .sidebar.open { left: 0; }
         .sidebar-close { align-self: flex-end; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; }
-        .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: white; padding: 12px 10px; font-size: 1.1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
+        .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 20px; }
+        .sidebar h3:first-of-type { margin-top: 0; }
+        .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: white; padding: 12px 10px; font-size: 1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
         .sidebar-footer { margin-top: auto; font-size: 0.8rem; color: var(--text-meta); text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.5; }
 
@@ -46,13 +47,17 @@
         .cat-item { padding: 8px 20px; background: var(--surface); border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: 0.2s; }
         .cat-item.active { background: var(--primary); color: white; }
 
-        /* Grid de Filmes */
-        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        /* Grid de Filmes e Estado Vazio */
+        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; min-height: 400px; }
         @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
         .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; }
         .movie-card:hover { transform: scale(1.05); }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .movie-rating { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #facc15; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        
+        .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-meta); }
+        .no-results i { font-size: 4rem; color: var(--primary); margin-bottom: 20px; opacity: 0.8; }
+        .no-results h2 { font-size: 1.5rem; color: white; margin-bottom: 10px; }
 
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 10px; }
@@ -64,16 +69,23 @@
         .modal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; }
         .modal-meta { color: var(--text-meta); font-size: 0.95rem; margin-bottom: 15px; display: flex; gap: 15px; }
         .modal-overview { font-size: 1.05rem; line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+
+        /* Secção Elenco (Atores) */
+        .cast-section { margin-bottom: 25px; }
+        .cast-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .cast-item { min-width: 90px; text-align: center; }
+        .cast-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--surface); background: #444; }
+        .cast-name { font-size: 0.8rem; font-weight: 600; color: #ddd; line-height: 1.2; }
         
         /* Trailer e Relacionados */
         .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
         .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 20px; background: #000; border-radius: var(--radius-md); overflow: hidden; }
         .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* Botões Sociais Em Baixo do Trailer */
+        /* Botões Sociais */
         .action-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: var(--radius-md); }
         .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; min-width: 130px; }
-        .btn-watch { background: var(--primary); color: white; text-decoration: none; display: none; /* Escondido até carregar o link */ }
+        .btn-watch { background: var(--primary); color: white; text-decoration: none; display: none; }
         .btn-watch:hover { background: #b80710; }
         .btn-icon { background: var(--surface); color: white; }
         .btn-icon:hover { background: #444; }
@@ -83,19 +95,15 @@
         .related-card { min-width: 130px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
         .related-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
 
-        /* WhatsApp Animado e Balão */
+        /* WhatsApp Animado e Pesquisa Flutuante */
         .whatsapp-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 10px; }
         .wa-tooltip { background: white; color: black; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; position: relative; opacity: 1; transition: opacity 0.5s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wa-tooltip::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); border-width: 6px 0 6px 6px; border-style: solid; border-color: transparent transparent transparent white; }
         .wa-tooltip.hide { opacity: 0; pointer-events: none; }
-        
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
         .whatsapp-float { background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; animation: pulse 2s infinite; }
-
-        /* Botão Flutuante Pesquisa */
         .float-search { position: fixed; bottom: 20px; left: 20px; background: var(--surface); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; text-decoration: none; }
         .float-search.show { opacity: 1; pointer-events: auto; }
-
         .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
     </style>
 </head>
@@ -104,6 +112,11 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+    
+    <h3><i class="fas fa-fire"></i> Explorar</h3>
+    <button class="side-cat" onclick="setAdvancedFilter('primary_release_year=2024', this)"><i class="fas fa-calendar-alt"></i> Lançamentos 2024</button>
+    <button class="side-cat" onclick="setAdvancedFilter('sort_by=vote_average.desc&vote_count.gte=1000', this)"><i class="fas fa-star"></i> Aclamados</button>
+
     <h3><i class="fas fa-film"></i> Géneros</h3>
     <button class="side-cat" onclick="setGenre(28, this)"><i class="fas fa-car-crash"></i> Ação</button>
     <button class="side-cat" onclick="setGenre(35, this)"><i class="fas fa-laugh-squint"></i> Comédia</button>
@@ -154,6 +167,11 @@
             
             <p id="m-desc" class="modal-overview">Sinopse...</p>
             
+            <div class="cast-section" id="cast-section" style="display: none;">
+                <h3 class="section-title" style="font-size: 1rem;">Elenco Principal</h3>
+                <div class="cast-list" id="m-cast"></div>
+            </div>
+            
             <div id="trailer-section" style="display: none;">
                 <h3 class="section-title">Trailer</h3>
                 <div class="trailer-container" id="m-trailer"></div>
@@ -192,6 +210,7 @@ const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
 let currentEndpoint = 'trending/all/week';
 let currentGenre = '';
+let currentAdvanced = '';
 let allItems = [];
 let isSavedView = false;
 let selectedItem = null;
@@ -199,17 +218,12 @@ let currentPage = 1;
 let isFetching = false;
 let currentQuery = '';
 
-// Esconde a mensagem do WhatsApp após 5 segundos
 setTimeout(() => { document.getElementById('wa-tooltip').classList.add('hide'); }, 5000);
 
-// Mostra o botão flutuante de pesquisa ao rolar
 window.onscroll = function() {
     const floatBtn = document.getElementById('floatSearch');
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        floatBtn.classList.add('show');
-    } else {
-        floatBtn.classList.remove('show');
-    }
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { floatBtn.classList.add('show'); } 
+    else { floatBtn.classList.remove('show'); }
 };
 
 function toggleSidebar() {
@@ -228,7 +242,7 @@ function toggleSidebar() {
 
 function resetHome() {
     window.scrollTo(0, 0);
-    setCategory('trending/all/week', document.querySelector('.cat-item')); // Seleciona o primeiro "Novos"
+    setCategory('trending/all/week', document.querySelector('.cat-item'));
 }
 
 async function fetchContent() {
@@ -240,6 +254,8 @@ async function fetchContent() {
         let url = '';
         if (currentQuery) {
             url = `${BASE_URL}/search/multi?api_key=${API_KEY}&language=pt-BR&query=${encodeURIComponent(currentQuery)}&page=${currentPage}`;
+        } else if (currentAdvanced) {
+            url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&${currentAdvanced}&page=${currentPage}`;
         } else if (currentGenre) {
             url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=pt-BR&with_genres=${currentGenre}&page=${currentPage}`;
         } else {
@@ -254,6 +270,14 @@ async function fetchContent() {
             allItems = currentPage === 1 ? validItems : [...allItems, ...validItems];
             renderGrid(validItems, currentPage === 1);
             currentPage++;
+        } else if (currentPage === 1) {
+            // Nova funcionalidade: Página de "Nenhum Resultado"
+            document.getElementById('feed').innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-search-minus"></i>
+                    <h2>Ups! Nada encontrado.</h2>
+                    <p>Não conseguimos encontrar resultados para a tua pesquisa.</p>
+                </div>`;
         }
     } catch (e) { console.error("Erro ao carregar."); }
     
@@ -279,31 +303,31 @@ function renderGrid(items, clear = false) {
 const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
 window.onload = () => { observer.observe(document.getElementById('loader')); fetchContent(); };
 
-function setGenre(genreId, btn) {
-    toggleSidebar(); // Fecha o menu lateral ao escolher
+function clearActiveButtons() {
     document.querySelectorAll('.cat-item, .side-cat').forEach(i => i.classList.remove('active'));
-    btn.classList.add('active');
-    currentGenre = genreId;
-    currentQuery = '';
-    isSavedView = false;
-    currentPage = 1;
-    fetchContent();
+}
+
+function setGenre(genreId, btn) {
+    toggleSidebar(); clearActiveButtons(); btn.classList.add('active');
+    currentGenre = genreId; currentAdvanced = ''; currentQuery = ''; isSavedView = false; currentPage = 1; fetchContent();
+}
+
+function setAdvancedFilter(filterString, btn) {
+    toggleSidebar(); clearActiveButtons(); btn.classList.add('active');
+    currentAdvanced = filterString; currentGenre = ''; currentQuery = ''; isSavedView = false; currentPage = 1; fetchContent();
 }
 
 function setCategory(endpoint, btn) {
-    document.querySelectorAll('.cat-item, .side-cat').forEach(i => i.classList.remove('active'));
-    btn.classList.add('active');
-    currentEndpoint = endpoint;
-    currentGenre = '';
-    currentQuery = '';
-    isSavedView = false;
-    currentPage = 1;
-    fetchContent();
+    clearActiveButtons(); btn.classList.add('active');
+    currentEndpoint = endpoint; currentAdvanced = ''; currentGenre = ''; currentQuery = ''; isSavedView = false; currentPage = 1; fetchContent();
 }
 
 function startSearch() {
     const query = document.getElementById('search-input').value;
-    if(query.trim()) { currentQuery = query; currentGenre = ''; currentPage = 1; fetchContent(); }
+    if(query.trim()) { 
+        currentQuery = query; currentGenre = ''; currentAdvanced = ''; currentPage = 1; 
+        clearActiveButtons(); fetchContent(); 
+    }
 }
 
 async function openModal(item) {
@@ -318,19 +342,39 @@ async function openModal(item) {
     document.getElementById('m-rate').innerHTML = `<i class="fas fa-star" style="color:#facc15"></i> ${item.vote_average.toFixed(1)}`;
     document.getElementById('m-desc').innerText = item.overview || "Nenhuma sinopse disponível.";
     
-    // Esconder o botão oficial até sabermos se o filme tem um site próprio
     const watchBtn = document.getElementById('m-watch-btn');
     watchBtn.style.display = 'none';
 
-    // Novo FETCH para obter os detalhes específicos (onde está o site oficial)
+    // Pedido extra para detalhes e site oficial
     try {
         const detailRes = await fetch(`${BASE_URL}/${type}/${item.id}?api_key=${API_KEY}&language=pt-BR`);
         const detailData = await detailRes.json();
-        if(detailData.homepage) {
-            watchBtn.href = detailData.homepage;
-            watchBtn.style.display = 'flex'; // Mostra o botão se existir site
-        }
+        if(detailData.homepage) { watchBtn.href = detailData.homepage; watchBtn.style.display = 'flex'; }
     } catch(e) {}
+
+    // Pedido extra para o Elenco Principal (Atores)
+    try {
+        const castRes = await fetch(`${BASE_URL}/${type}/${item.id}/credits?api_key=${API_KEY}&language=pt-BR`);
+        const castData = await castRes.json();
+        const castContainer = document.getElementById('m-cast');
+        castContainer.innerHTML = '';
+        
+        if(castData.cast && castData.cast.length > 0) {
+            // Pega apenas os 5 primeiros atores usando slice(0, 5)
+            castData.cast.slice(0, 5).forEach(actor => {
+                if(actor.profile_path) {
+                    castContainer.innerHTML += `
+                        <div class="cast-item">
+                            <img src="${IMG_URL + actor.profile_path}" class="cast-img" alt="${actor.name}">
+                            <div class="cast-name">${actor.name}</div>
+                        </div>`;
+                }
+            });
+            document.getElementById('cast-section').style.display = 'block';
+        } else {
+            document.getElementById('cast-section').style.display = 'none';
+        }
+    } catch(e) { document.getElementById('cast-section').style.display = 'none'; }
 
     updateActionBtns();
     document.getElementById('modal').style.display = 'flex';
@@ -339,7 +383,6 @@ async function openModal(item) {
     fetchTrailerAndRelated(type, item.id);
 }
 
-// Funções de Interação Sociais
 function toggleLike() {
     const btn = document.getElementById('m-like-btn');
     const icon = btn.querySelector('i');
@@ -349,9 +392,8 @@ function toggleLike() {
 
 function partilharConteudo() {
     const title = selectedItem.title || selectedItem.name;
-    if (navigator.share) {
-        navigator.share({ title: `Vê isto no Trailers360: ${title}`, url: window.location.href }).catch(console.error);
-    } else { alert(`Link copiado!`); }
+    if (navigator.share) { navigator.share({ title: `Vê isto no Trailers360: ${title}`, url: window.location.href }).catch(console.error); } 
+    else { alert(`Link copiado!`); }
 }
 
 async function fetchTrailerAndRelated(type, id) {
