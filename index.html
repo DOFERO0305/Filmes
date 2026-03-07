@@ -13,18 +13,31 @@
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
         
         /* Navbar */
         .navbar { position: sticky; top: 0; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); z-index: 100; padding: 15px 20px; border-bottom: 1px solid #333; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        
+        .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; }
+        .logo-container { display: flex; align-items: center; cursor: pointer; }
         .logo { font-weight: 800; font-size: 1.8rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
         .logo span { color: var(--primary); }
         .btn-saved { background: transparent; border: 1px solid var(--text); color: var(--text); padding: 8px 16px; border-radius: 100px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-saved.active { background: var(--text); color: var(--bg); }
 
+        /* Menu Lateral (Sidebar) */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: none; opacity: 0; transition: 0.3s; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #1a1a1a; z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        .sidebar.open { left: 0; }
+        .sidebar-close { align-self: flex-end; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; }
+        .sidebar h3 { color: var(--text-meta); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .side-cat { display: block; width: 100%; text-align: left; background: none; border: none; color: white; padding: 12px 10px; font-size: 1.1rem; cursor: pointer; transition: 0.2s; border-radius: 8px; margin-bottom: 5px; }
+        .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
+        .sidebar-footer { margin-top: auto; font-size: 0.8rem; color: var(--text-meta); text-align: center; border-top: 1px solid #333; padding-top: 15px; line-height: 1.5; }
+
         /* Pesquisa e Filtros */
-        .search-bar { margin: 20px auto; max-width: 800px; position: relative; padding: 0 20px; }
+        #search-section { margin: 20px auto; max-width: 800px; position: relative; padding: 0 20px; }
         .search-bar input { width: 100%; padding: 14px 20px 14px 50px; border-radius: 100px; border: none; background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; outline: none; }
         .search-bar i { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
 
@@ -41,7 +54,7 @@
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .movie-rating { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #facc15; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
 
-        /* Modal Melhorado com Interações */
+        /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 10px; }
         .modal-content { background: var(--bg); max-width: 800px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 95vh; overflow-y: auto; }
         .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10; }
@@ -52,51 +65,77 @@
         .modal-meta { color: var(--text-meta); font-size: 0.95rem; margin-bottom: 15px; display: flex; gap: 15px; }
         .modal-overview { font-size: 1.05rem; line-height: 1.6; color: #ddd; margin-bottom: 25px; }
         
-        /* Botões Sociais e Assistir */
-        .action-row { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; min-width: 140px; }
-        .btn-watch { background: var(--primary); color: white; text-decoration: none; }
+        /* Trailer e Relacionados */
+        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 20px; background: #000; border-radius: var(--radius-md); overflow: hidden; }
+        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        /* Botões Sociais Em Baixo do Trailer */
+        .action-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.05); padding: 15px; border-radius: var(--radius-md); }
+        .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; min-width: 130px; }
+        .btn-watch { background: var(--primary); color: white; text-decoration: none; display: none; /* Escondido até carregar o link */ }
         .btn-watch:hover { background: #b80710; }
-        .btn-icon { background: var(--surface); color: white; flex: none; width: 45px; }
+        .btn-icon { background: var(--surface); color: white; }
         .btn-icon:hover { background: #444; }
         .btn-icon.liked { color: #e11d48; }
 
-        /* Trailer e Relacionados */
-        .section-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px; }
-        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 30px; background: #000; border-radius: var(--radius-md); overflow: hidden; }
-        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .related-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .related-card { min-width: 130px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
         .related-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
 
-        /* Componentes Novos: WhatsApp e Rodapé */
-        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; transition: transform 0.2s; }
-        .whatsapp-float:hover { transform: scale(1.1); }
-        footer { text-align: center; padding: 25px 20px; color: var(--text-meta); border-top: 1px solid #333; margin-top: 40px; font-size: 0.9rem; }
+        /* WhatsApp Animado e Balão */
+        .whatsapp-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; gap: 10px; }
+        .wa-tooltip { background: white; color: black; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; position: relative; opacity: 1; transition: opacity 0.5s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .wa-tooltip::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); border-width: 6px 0 6px 6px; border-style: solid; border-color: transparent transparent transparent white; }
+        .wa-tooltip.hide { opacity: 0; pointer-events: none; }
         
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+        .whatsapp-float { background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; animation: pulse 2s infinite; }
+
+        /* Botão Flutuante Pesquisa */
+        .float-search { position: fixed; bottom: 20px; left: 20px; background: var(--surface); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; text-decoration: none; }
+        .float-search.show { opacity: 1; pointer-events: auto; }
+
         .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
     </style>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-film"></i> Géneros</h3>
+    <button class="side-cat" onclick="setGenre(28, this)"><i class="fas fa-car-crash"></i> Ação</button>
+    <button class="side-cat" onclick="setGenre(35, this)"><i class="fas fa-laugh-squint"></i> Comédia</button>
+    <button class="side-cat" onclick="setGenre(27, this)"><i class="fas fa-ghost"></i> Terror</button>
+    <button class="side-cat" onclick="setGenre(16, this)"><i class="fas fa-magic"></i> Animação</button>
+    <button class="side-cat" onclick="setGenre(10749, this)"><i class="fas fa-heart"></i> Romance</button>
+    
+    <div class="sidebar-footer">
+        <strong>Trailers360</strong> &copy; 2026<br>
+        Criado Por Donaldo Fernando Rodrigues
+    </div>
+</div>
+
 <nav class="navbar">
     <div class="nav-top">
-        <a href="#" class="logo">Trailers<span>360</span></a>
+        <div class="logo-container">
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="logo" onclick="resetHome()">Trailers<span>360</span></div>
+        </div>
         <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">Minha Lista</button>
     </div>
 </nav>
 
-<div class="search-bar">
+<div class="search-bar" id="search-section">
     <i class="fas fa-search"></i>
     <input type="text" id="search-input" placeholder="Pesquisar filmes ou séries..." onkeyup="if(event.key==='Enter') startSearch()">
 </div>
 
 <div class="categories">
-    <div class="cat-item active" onclick="setCategory('trending/all/week', this)">Em Alta</div>
-    <div class="cat-item" onclick="setGenre(28, this)">Ação</div>
-    <div class="cat-item" onclick="setGenre(35, this)">Comédia</div>
-    <div class="cat-item" onclick="setGenre(27, this)">Terror</div>
-    <div class="cat-item" onclick="setGenre(16, this)">Animação</div>
+    <div class="cat-item active" onclick="setCategory('trending/all/week', this)">Novos</div>
+    <div class="cat-item" onclick="setCategory('discover/movie', this)">Filmes</div>
+    <div class="cat-item" onclick="setCategory('discover/tv', this)">Séries</div>
 </div>
 
 <main class="feed" id="feed"></main>
@@ -113,18 +152,18 @@
                 <span id="m-rate"><i class="fas fa-star" style="color:#facc15"></i> 8.5</span>
             </div>
             
-            <div class="action-row">
-                <a id="m-watch-btn" href="#" target="_blank" class="btn-action btn-watch"><i class="fas fa-play"></i> Assistir Oficial</a>
-                <button id="m-like-btn" class="btn-action btn-icon" onclick="toggleLike()" title="Gostar"><i class="far fa-heart"></i></button>
-                <button class="btn-action btn-icon" onclick="partilharConteudo()" title="Partilhar"><i class="fas fa-share-alt"></i></button>
-                <button id="m-save-btn" class="btn-action btn-icon" onclick="toggleSave()" title="Guardar"><i class="fas fa-bookmark"></i></button>
-            </div>
-
             <p id="m-desc" class="modal-overview">Sinopse...</p>
             
             <div id="trailer-section" style="display: none;">
-                <h3 class="section-title">Trailer Oficial</h3>
+                <h3 class="section-title">Trailer</h3>
                 <div class="trailer-container" id="m-trailer"></div>
+            </div>
+
+            <div class="action-row">
+                <a id="m-watch-btn" href="#" target="_blank" class="btn-action btn-watch"><i class="fas fa-external-link-alt"></i> Site Oficial</a>
+                <button id="m-like-btn" class="btn-action btn-icon" onclick="toggleLike()" title="Gostar"><i class="far fa-heart"></i></button>
+                <button class="btn-action btn-icon" onclick="partilharConteudo()" title="Partilhar"><i class="fas fa-share-alt"></i></button>
+                <button id="m-save-btn" class="btn-action btn-icon" onclick="toggleSave()" title="Guardar"><i class="fas fa-bookmark"></i></button>
             </div>
 
             <div id="related-section" style="display: none;">
@@ -135,14 +174,16 @@
     </div>
 </div>
 
-<a href="https://wa.me/258849085157?text=Olá!%20Tenho%20um%20pedido%20ou%20dúvida%20sobre%20o%20Trailers360." class="whatsapp-float" target="_blank" title="Fazer pedido no WhatsApp">
-    <i class="fab fa-whatsapp"></i>
+<a href="#search-section" class="float-search" id="floatSearch" onclick="document.getElementById('search-input').focus()">
+    <i class="fas fa-search"></i>
 </a>
 
-<footer>
-    <strong>Trailers360</strong> &copy; 2026<br>
-    Criado Por Donaldo Fernando Rodrigues
-</footer>
+<div class="whatsapp-container">
+    <div class="wa-tooltip" id="wa-tooltip">Olá! Como posso ajudar?</div>
+    <a href="https://wa.me/258849085157?text=Olá!%20Tenho%20um%20pedido%20ou%20dúvida%20sobre%20o%20Trailers360." class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</div>
 
 <script>
 const API_KEY = 'a2144f612724d5f4a8a14c4a9ac78f7a'; 
@@ -157,6 +198,38 @@ let selectedItem = null;
 let currentPage = 1;
 let isFetching = false;
 let currentQuery = '';
+
+// Esconde a mensagem do WhatsApp após 5 segundos
+setTimeout(() => { document.getElementById('wa-tooltip').classList.add('hide'); }, 5000);
+
+// Mostra o botão flutuante de pesquisa ao rolar
+window.onscroll = function() {
+    const floatBtn = document.getElementById('floatSearch');
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        floatBtn.classList.add('show');
+    } else {
+        floatBtn.classList.remove('show');
+    }
+};
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 300);
+    } else {
+        overlay.style.display = 'block';
+        setTimeout(() => overlay.style.opacity = '1', 10);
+        sidebar.classList.add('open');
+    }
+}
+
+function resetHome() {
+    window.scrollTo(0, 0);
+    setCategory('trending/all/week', document.querySelector('.cat-item')); // Seleciona o primeiro "Novos"
+}
 
 async function fetchContent() {
     if(isSavedView || isFetching) return;
@@ -206,9 +279,9 @@ function renderGrid(items, clear = false) {
 const observer = new IntersectionObserver(e => { if(e[0].isIntersecting) fetchContent(); }, { rootMargin: "100px" });
 window.onload = () => { observer.observe(document.getElementById('loader')); fetchContent(); };
 
-// Nova Função para Géneros (Ação, Comédia, etc)
 function setGenre(genreId, btn) {
-    document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+    toggleSidebar(); // Fecha o menu lateral ao escolher
+    document.querySelectorAll('.cat-item, .side-cat').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
     currentGenre = genreId;
     currentQuery = '';
@@ -218,7 +291,7 @@ function setGenre(genreId, btn) {
 }
 
 function setCategory(endpoint, btn) {
-    document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.cat-item, .side-cat').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
     currentEndpoint = endpoint;
     currentGenre = '';
@@ -237,6 +310,7 @@ async function openModal(item) {
     selectedItem = item;
     const title = item.title || item.name;
     const date = item.release_date || item.first_air_date || 'N/D';
+    let type = item.media_type || (currentEndpoint.includes('tv') ? 'tv' : 'movie');
     
     document.getElementById('m-title').innerText = title;
     document.getElementById('m-backdrop').src = item.backdrop_path ? (IMG_URL + item.backdrop_path) : (IMG_URL + item.poster_path);
@@ -244,15 +318,24 @@ async function openModal(item) {
     document.getElementById('m-rate').innerHTML = `<i class="fas fa-star" style="color:#facc15"></i> ${item.vote_average.toFixed(1)}`;
     document.getElementById('m-desc').innerText = item.overview || "Nenhuma sinopse disponível.";
     
-    // Configura o link de Assistir Oficial (pesquisa no Google como reserva)
-    document.getElementById('m-watch-btn').href = `https://www.themoviedb.org/${item.media_type || 'movie'}/${item.id}/watch`;
+    // Esconder o botão oficial até sabermos se o filme tem um site próprio
+    const watchBtn = document.getElementById('m-watch-btn');
+    watchBtn.style.display = 'none';
+
+    // Novo FETCH para obter os detalhes específicos (onde está o site oficial)
+    try {
+        const detailRes = await fetch(`${BASE_URL}/${type}/${item.id}?api_key=${API_KEY}&language=pt-BR`);
+        const detailData = await detailRes.json();
+        if(detailData.homepage) {
+            watchBtn.href = detailData.homepage;
+            watchBtn.style.display = 'flex'; // Mostra o botão se existir site
+        }
+    } catch(e) {}
 
     updateActionBtns();
-    
     document.getElementById('modal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
-    let type = item.media_type || (currentEndpoint.includes('tv') ? 'tv' : 'movie');
     fetchTrailerAndRelated(type, item.id);
 }
 
@@ -261,24 +344,14 @@ function toggleLike() {
     const btn = document.getElementById('m-like-btn');
     const icon = btn.querySelector('i');
     btn.classList.toggle('liked');
-    
-    if(btn.classList.contains('liked')) {
-        icon.className = 'fas fa-heart'; // Coração preenchido
-    } else {
-        icon.className = 'far fa-heart'; // Coração vazio
-    }
+    icon.className = btn.classList.contains('liked') ? 'fas fa-heart' : 'far fa-heart';
 }
 
 function partilharConteudo() {
     const title = selectedItem.title || selectedItem.name;
-    const url = window.location.href; // Idealmente seria um link direto para o filme
-    
     if (navigator.share) {
-        navigator.share({ title: `Vê isto no Trailers360: ${title}`, url: url })
-        .catch(console.error);
-    } else {
-        alert(`Link para partilhar ${title} copiado!`);
-    }
+        navigator.share({ title: `Vê isto no Trailers360: ${title}`, url: window.location.href }).catch(console.error);
+    } else { alert(`Link copiado!`); }
 }
 
 async function fetchTrailerAndRelated(type, id) {
@@ -317,7 +390,6 @@ function closeModal(event, force = false) {
         document.getElementById('modal').style.display = 'none';
         document.body.style.overflow = 'auto';
         document.getElementById('m-trailer').innerHTML = ''; 
-        // Reseta o botão de gosto
         const likeBtn = document.getElementById('m-like-btn');
         likeBtn.classList.remove('liked');
         likeBtn.querySelector('i').className = 'far fa-heart';
@@ -327,8 +399,7 @@ function closeModal(event, force = false) {
 function toggleSave() {
     let saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
     const idx = saved.findIndex(x => x.id === selectedItem.id);
-    if(idx > -1) saved.splice(idx, 1);
-    else saved.push(selectedItem);
+    if(idx > -1) saved.splice(idx, 1); else saved.push(selectedItem);
     localStorage.setItem('cld_flix_saved', JSON.stringify(saved));
     updateActionBtns();
     if(isSavedView) renderGrid(saved, true);
@@ -351,15 +422,9 @@ function updateActionBtns() {
     const saved = JSON.parse(localStorage.getItem('cld_flix_saved') || '[]');
     const isSaved = saved.some(x => x.id === selectedItem.id);
     const saveBtn = document.getElementById('m-save-btn');
-    if(isSaved) {
-        saveBtn.style.color = '#e50914';
-        saveBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
-    } else {
-        saveBtn.style.color = 'white';
-        saveBtn.innerHTML = '<i class="far fa-bookmark"></i>';
-    }
+    if(isSaved) { saveBtn.style.color = '#e50914'; saveBtn.innerHTML = '<i class="fas fa-bookmark"></i>'; } 
+    else { saveBtn.style.color = 'white'; saveBtn.innerHTML = '<i class="far fa-bookmark"></i>'; }
 }
 </script>
 </body>
 </html>
-
