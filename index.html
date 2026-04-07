@@ -21,10 +21,10 @@
         .navbar { position: sticky; top: 0; background: var(--bg); opacity: 0.98; z-index: 100; padding: 15px 20px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         .menu-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
-        .logo-container { display: flex; align-items: center; cursor: pointer; gap: 10px; }
-        .logo { font-weight: 800; font-size: 1.4rem; color: var(--text); text-decoration: none; letter-spacing: -0.5px; }
+        .logo-container { display: flex; align-items: center; cursor: pointer; gap: 8px; }
+        .logo { font-weight: 800; font-size: 1.4rem; text-decoration: none; letter-spacing: -0.5px; }
         
-        /* Cores Diferentes no Título */
+        /* Cores Diferentes no Título Principal */
         .logo-historias { color: var(--primary); }
         .logo-e { font-size: 1.1rem; color: var(--text); font-weight: 600; }
         .logo-novelas { color: #e50914; }
@@ -42,10 +42,10 @@
         .refresh-btn { background: none; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; transition: 0.2s; padding: 5px; margin-left: 10px; }
         .refresh-btn:active { transform: rotate(180deg) scale(0.8); }
 
-        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 90px; } 
+        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 100px; position: relative; z-index: 10; } 
         @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
         
-        .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 20; }
         .movie-card:hover { transform: scale(1.05); }
         .movie-poster { width: 100%; height: 100%; object-fit: cover; }
         .movie-rating { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
@@ -62,9 +62,9 @@
         .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 5px; color: var(--text); line-height: 1.3; margin-top: 10px; }
         .modal-time-detail { font-size: 0.8rem; color: var(--text-meta); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
         
-        /* FORMato 16:9 para o Vídeo */
-        .trailer-container { position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex; justify-content: center; align-items: center; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 15px;}
-        .trailer-container iframe { width: 100%; height: 100%; border: none; }
+        /* NOVO FORMATO 16:9 PERFEITO E ANTI-CRASH */
+        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 15px; }
+        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         /* BOTÕES DE NAVEGAÇÃO & VIP */
         .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -301,7 +301,8 @@
                     throw new Error("Erro de dados.");
                 }
                 
-                let cachedData = JSON.parse(localStorage.getItem('historias_cache_fb_oficial') || '[]');
+                // Mudei a chave de memória para "v8_pro" para apagar os erros antigos forçadamente
+                let cachedData = JSON.parse(localStorage.getItem('historias_v8_pro') || '[]');
                 let novosEncontrados = false;
                 
                 data.items.forEach(newItem => {
@@ -332,7 +333,7 @@
                 });
                 
                 cachedData.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                localStorage.setItem('historias_cache_fb_oficial', JSON.stringify(cachedData));
+                localStorage.setItem('historias_v8_pro', JSON.stringify(cachedData));
                 
                 allItems = cachedData;
 
@@ -359,7 +360,7 @@
 
             } catch (e) { 
                 if(!isBackground) {
-                    allItems = JSON.parse(localStorage.getItem('historias_cache_fb_oficial') || '[]');
+                    allItems = JSON.parse(localStorage.getItem('historias_v8_pro') || '[]');
                     if(allItems.length > 0) {
                         document.getElementById('feed-count-label').innerText = `${allItems.length} vídeos na memória`;
                         displayedItems = 0;
@@ -382,10 +383,19 @@
             this.querySelector('i').classList.add('fa-spin');
         });
 
+        // SISTEMA ANTI-FALHA NO CLIQUE
         function desenharCartao(item, contentor) {
             const card = document.createElement('div');
             card.className = 'movie-card';
-            card.onclick = () => openModal(item);
+            
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                try {
+                    openModal(item);
+                } catch(erro) {
+                    console.error("Erro ao tentar abrir a janela:", erro);
+                }
+            });
             
             const imgUrl = item.thumbnail;
             const tempoStr = calcularTempoPassado(item.pubDate);
@@ -432,29 +442,31 @@
 
         function openModal(item) {
             selectedItem = item;
-            let currentList = isSavedView ? JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]') : allItems;
+            let currentList = isSavedView ? JSON.parse(localStorage.getItem('assistir_depois_pro') || '[]') : allItems;
             currentIndex = currentList.findIndex(x => x.guid === item.guid);
             
             let rawTitle = item.title || "Publicação";
-            rawTitle = rawTitle.split('#')[0].trim(); 
+            if(typeof rawTitle === 'string') {
+                rawTitle = rawTitle.split('#')[0].trim(); 
+            }
             document.getElementById('m-title').innerText = rawTitle;
             
             const tempoStr = calcularTempoPassado(item.pubDate);
             document.getElementById('m-time').innerHTML = `<i class="far fa-clock"></i> Publicado ${tempoStr.toLowerCase()}`;
             
-            let linkVideo = item.link;
+            let linkVideo = item.link || "";
             let embedHtml = "";
 
             if (linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch')) {
                 const fbUrlCodificado = encodeURIComponent(linkVideo);
-                embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false&width=auto" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+                // Iframe super seguro sem restrição de tamanho que causava o crash!
+                embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
             } else {
-                embedHtml = `<iframe src="${linkVideo}" width="100%" height="100%" frameborder="0"></iframe>`;
+                embedHtml = `<iframe src="${linkVideo}" frameborder="0" allowfullscreen="true"></iframe>`;
             }
             
             document.getElementById('m-trailer').innerHTML = embedHtml;
             
-            // Lógica dos Botões Próximo e Anterior
             document.getElementById('m-next-btn-main').onclick = () => playNext(currentList);
             document.getElementById('m-prev-btn').onclick = () => playPrev(currentList);
 
@@ -468,7 +480,11 @@
                     let relTitle = rel.title ? rel.title.split('#')[0].trim() : "Ver mais";
                     const div = document.createElement('div');
                     div.className = 'related-item';
-                    div.onclick = () => { openModal(rel); document.querySelector('.modal-content').scrollTop = 0; };
+                    div.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        openModal(rel); 
+                        document.querySelector('.modal-content').scrollTop = 0; 
+                    };
                     div.innerHTML = `<img src="${rel.thumbnail}" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500'"><div class="related-item-title">${relTitle}</div>`;
                     relatedContainer.appendChild(div);
                 });
@@ -484,14 +500,14 @@
 
         function playNext(list) {
             currentIndex++;
-            if (currentIndex >= list.length) { currentIndex = 0; } // Volta ao início se acabar
+            if (currentIndex >= list.length) { currentIndex = 0; }
             openModal(list[currentIndex]);
             document.querySelector('.modal-content').scrollTop = 0;
         }
 
         function playPrev(list) {
             currentIndex--;
-            if (currentIndex < 0) { currentIndex = list.length - 1; } // Vai para o último se voltar antes do primeiro
+            if (currentIndex < 0) { currentIndex = list.length - 1; }
             openModal(list[currentIndex]);
             document.querySelector('.modal-content').scrollTop = 0;
         }
@@ -505,13 +521,13 @@
         }
 
         function toggleSave() {
-            let saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
+            let saved = JSON.parse(localStorage.getItem('assistir_depois_pro') || '[]');
             const idx = saved.findIndex(x => x.guid === selectedItem.guid);
             
             if(idx > -1) { saved.splice(idx, 1); } 
             else { saved.push(selectedItem); }
             
-            localStorage.setItem('assistir_depois_fb', JSON.stringify(saved));
+            localStorage.setItem('assistir_depois_pro', JSON.stringify(saved));
             updateActionBtns();
             
             if(isSavedView) {
@@ -529,7 +545,7 @@
             
             if(isSavedView) {
                 btn.classList.add('active');
-                const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
+                const saved = JSON.parse(localStorage.getItem('assistir_depois_pro') || '[]');
                 document.getElementById('feed-count-label').style.display = 'none';
                 document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-clock" style="color: var(--text);"></i> Assistir Depois';
                 document.querySelector('.refresh-btn').style.display = 'none';
@@ -551,7 +567,7 @@
         }
 
         function updateActionBtns() {
-            const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
+            const saved = JSON.parse(localStorage.getItem('assistir_depois_pro') || '[]');
             const isSaved = saved.some(x => x.guid === selectedItem.guid);
             const saveBtn = document.getElementById('m-save-btn');
             
@@ -565,6 +581,10 @@
         }
 
         window.onload = () => { 
+            // Limpa lixos e erros anteriores
+            localStorage.removeItem('historias_cache_fb_oficial'); 
+            localStorage.removeItem('assistir_depois_fb');
+            
             observer.observe(document.getElementById('loader'));
             fetchContent(); 
         };
