@@ -9,8 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* TEMA ESCURO (Padrão) E AZUL */
         :root { --primary: #1877F2; --bg: #141414; --surface: #2f2f2f; --text: #ffffff; --text-meta: #aaaaaa; --radius-md: 8px; --border: #333; }
+        
+        /* TEMA CLARO (Quando ativado no botão do sol) */
         body.light-mode { --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
         
@@ -30,11 +34,11 @@
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
 
         .feed-header { max-width: 1200px; margin: 20px auto 10px; padding: 0 20px; font-size: 1.2rem; font-weight: 700; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
-        .feed-count { font-size: 0.9rem; color: var(--text-meta); font-weight: normal; }
+        .feed-count { font-size: 0.9rem; color: var(--text-meta); font-weight: normal; transition: 0.3s; }
         .refresh-btn { background: none; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; transition: 0.2s; padding: 5px; margin-left: 10px; }
         .refresh-btn:active { transform: rotate(180deg) scale(0.8); }
 
-        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 90px; } /* Espaço para não sobrepor botões */
+        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 90px; } 
         @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
         
         .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -49,17 +53,18 @@
         .modal-content { background: var(--bg); max-width: 500px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.8); max-height: 95vh; overflow-y: auto; border: 1px solid var(--border); }
         .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); color: white; border: 1px solid rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10; transition: 0.2s; }
         
-        .modal-info { padding: 20px; }
-        .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 5px; color: var(--text); line-height: 1.3; margin-top: 10px; }
-        .modal-time-detail { font-size: 0.8rem; color: var(--text-meta); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid var(--border); padding-bottom: 15px;}
+        .modal-info { padding: 20px; padding-top: 35px; /* Mais espaço no topo por causa do botão de fechar */ }
         
         .trailer-container { position: relative; width: 100%; display: flex; justify-content: center; background: #000; border-radius: var(--radius-md); overflow: hidden; min-height: 400px;}
         .trailer-container iframe { width: 100%; height: 550px; border: none; border-radius: 8px;}
         
-        .action-row { display: flex; gap: 10px; margin-top: 15px; margin-bottom: 15px; }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-next { background: #e50914; color: white; }
-        .btn-icon { background: var(--surface); color: var(--text); border: 1px solid var(--border); flex: 0.3; }
+        .action-row { display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px; }
+        .btn-action { padding: 14px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-next { flex: 1; background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        
+        /* O Novo Botão Assistir Depois */
+        #m-save-btn { flex: 1.5; background: var(--primary); color: white; border: none; }
+        #m-save-btn.saved { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 
         .related-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
         .related-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
@@ -117,7 +122,7 @@
             z-index: 900;
             backdrop-filter: blur(8px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            pointer-events: none; /* Deixa clicar no que estiver atrás */
+            pointer-events: none; 
         }
         .dev-signature p { margin: 0; line-height: 1.5; }
         .dev-signature strong { color: #fff; font-size: 0.85rem; }
@@ -146,7 +151,7 @@
         <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
         <h3><i class="fas fa-bars"></i> Menu</h3>
         <button class="side-cat active" onclick="window.location.reload()"><i class="fas fa-home"></i> Início</button>
-        <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedView()"><i class="fas fa-bookmark"></i> Minha Lista</button>
+        <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedView()"><i class="fas fa-clock"></i> Assistir Depois</button>
     </div>
 
     <nav class="navbar">
@@ -161,7 +166,7 @@
 
     <div class="feed-header">
         <div style="display: flex; align-items: center;">
-            <i class="fas fa-fire" style="color: #e50914; margin-right: 8px;"></i> Últimos Vídeos
+            <i class="fas fa-play-circle" style="color: var(--primary); margin-right: 8px;"></i> Últimos Vídeos
             <button class="refresh-btn" onclick="fetchContent()" title="Procurar novos vídeos"><i class="fas fa-sync-alt"></i></button>
         </div>
         <span class="feed-count" id="feed-count-label">A carregar...</span>
@@ -177,16 +182,13 @@
                 
                 <div class="trailer-container" id="m-trailer"></div>
                 
-                <h2 id="m-title" class="modal-title">Título</h2>
-                <div class="modal-time-detail" id="m-time"><i class="far fa-clock"></i> Publicado há pouco</div>
-                
                 <div class="action-row">
+                    <button id="m-save-btn" class="btn-action" onclick="toggleSave()"><i class="fas fa-clock"></i> Assistir Depois</button>
                     <button id="m-next-btn" class="btn-action btn-next"><i class="fas fa-step-forward"></i> Próximo</button>
-                    <button id="m-save-btn" class="btn-action btn-icon" onclick="toggleSave()"><i class="far fa-bookmark"></i></button>
                 </div>
 
                 <div class="related-section" id="related-section">
-                    <div class="related-title"><i class="fas fa-list-ul"></i> Mais Vídeos:</div>
+                    <div class="related-title"><i class="fas fa-list-ul"></i> Relacionados:</div>
                     <div class="related-grid" id="m-related-grid"></div>
                 </div>
             </div>
@@ -360,7 +362,7 @@
             
             card.innerHTML = `
                 <img class="movie-poster" src="${imgUrl}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500'">
-                <div class="movie-rating"><i class="fas fa-play" style="color: #1877F2;"></i></div>
+                <div class="movie-rating"><i class="fas fa-play" style="color: var(--primary);"></i></div>
                 <div class="movie-time"><i class="far fa-clock"></i> ${tempoStr}</div>
             `;
             contentor.appendChild(card);
@@ -400,22 +402,12 @@
 
         function openModal(item) {
             selectedItem = item;
-            let currentList = isSavedView ? JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]') : allItems;
+            let currentList = isSavedView ? JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]') : allItems;
             currentIndex = currentList.findIndex(x => x.guid === item.guid);
-            
-            let rawTitle = item.title || "Publicação";
-            rawTitle = rawTitle.split('#')[0].trim(); 
-            document.getElementById('m-title').innerText = rawTitle;
-            
-            const tempoStr = calcularTempoPassado(item.pubDate);
-            document.getElementById('m-time').innerHTML = `<i class="far fa-clock"></i> Publicado ${tempoStr.toLowerCase()}`;
             
             let linkVideo = item.link;
             let embedHtml = "";
 
-            // O Erro do clique estava aqui! O código procurava o botão removido e encravava.
-            // Agora foca-se apenas em carregar o leitor e os relacionados.
-            
             if (linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch')) {
                 const fbUrlCodificado = encodeURIComponent(linkVideo);
                 embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false&width=350" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
@@ -466,13 +458,13 @@
         }
 
         function toggleSave() {
-            let saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+            let saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
             const idx = saved.findIndex(x => x.guid === selectedItem.guid);
             
             if(idx > -1) { saved.splice(idx, 1); } 
             else { saved.push(selectedItem); }
             
-            localStorage.setItem('historias_salvas_fb', JSON.stringify(saved));
+            localStorage.setItem('assistir_depois_fb', JSON.stringify(saved));
             updateActionBtns();
             
             if(isSavedView) {
@@ -490,19 +482,19 @@
             
             if(isSavedView) {
                 btn.classList.add('active');
-                const saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+                const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
                 document.getElementById('feed-count-label').style.display = 'none';
-                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-bookmark" style="color: var(--text);"></i> Minha Lista';
+                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-clock" style="color: var(--text);"></i> Assistir Depois';
                 document.querySelector('.refresh-btn').style.display = 'none';
                 document.getElementById('loader').style.opacity = '0';
                 
                 feed.innerHTML = '';
-                if(saved.length === 0) feed.innerHTML = "<div class='no-results'>Nenhum vídeo guardado.</div>";
+                if(saved.length === 0) feed.innerHTML = "<div class='no-results'>Nenhum vídeo guardado para assistir depois.</div>";
                 saved.forEach(item => desenharCartao(item, feed));
             } else {
                 btn.classList.remove('active');
                 document.getElementById('feed-count-label').style.display = 'block';
-                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-fire" style="color: #1877F2;"></i> Últimos Vídeos';
+                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-play-circle" style="color: var(--primary);"></i> Últimos Vídeos';
                 document.querySelector('.refresh-btn').style.display = 'inline-block';
                 
                 displayedItems = 0;
@@ -512,25 +504,20 @@
         }
 
         function updateActionBtns() {
-            const saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+            const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
             const isSaved = saved.some(x => x.guid === selectedItem.guid);
             const saveBtn = document.getElementById('m-save-btn');
             
             if(isSaved) { 
-                saveBtn.style.color = '#1877F2'; 
-                saveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Guardado'; 
+                saveBtn.classList.add('saved');
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvo para depois'; 
             } else { 
-                saveBtn.style.color = 'var(--text)'; 
-                saveBtn.innerHTML = '<i class="far fa-bookmark"></i> Guardar'; 
+                saveBtn.classList.remove('saved');
+                saveBtn.innerHTML = '<i class="fas fa-clock"></i> Assistir Depois'; 
             }
         }
 
         window.onload = () => { 
-            localStorage.removeItem('historias_cache_novelas');
-            localStorage.removeItem('historias_cache_novelas_v2');
-            localStorage.removeItem('historias_cache_novelas_v3');
-            localStorage.removeItem('historias_cache_novelas_v4');
-            
             observer.observe(document.getElementById('loader'));
             fetchContent(); 
         };
