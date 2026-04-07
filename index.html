@@ -62,9 +62,22 @@
         .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 5px; color: var(--text); line-height: 1.3; margin-top: 10px; }
         .modal-time-detail { font-size: 0.8rem; color: var(--text-meta); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
         
-        /* NOVO FORMATO 16:9 PERFEITO E ANTI-CRASH */
-        .trailer-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 15px; }
-        .trailer-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* ECRÃ INTELIGENTE: Adapta-se para não cortar vídeos verticais nem horizontais */
+        .trailer-container { 
+            position: relative; 
+            width: 100%; 
+            height: 65vh; /* Adapta-se à altura da janela */
+            min-height: 400px; 
+            max-height: 700px; 
+            background: #000; 
+            border-radius: var(--radius-md); 
+            overflow: hidden; 
+            margin-bottom: 15px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .trailer-container iframe { width: 100%; height: 100%; border: none; }
         
         /* BOTÕES DE NAVEGAÇÃO & VIP */
         .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -301,7 +314,6 @@
                     throw new Error("Erro de dados.");
                 }
                 
-                // Mudei a chave de memória para "v8_pro" para apagar os erros antigos forçadamente
                 let cachedData = JSON.parse(localStorage.getItem('historias_v8_pro') || '[]');
                 let novosEncontrados = false;
                 
@@ -383,7 +395,6 @@
             this.querySelector('i').classList.add('fa-spin');
         });
 
-        // SISTEMA ANTI-FALHA NO CLIQUE
         function desenharCartao(item, contentor) {
             const card = document.createElement('div');
             card.className = 'movie-card';
@@ -459,7 +470,6 @@
 
             if (linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch')) {
                 const fbUrlCodificado = encodeURIComponent(linkVideo);
-                // Iframe super seguro sem restrição de tamanho que causava o crash!
                 embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
             } else {
                 embedHtml = `<iframe src="${linkVideo}" frameborder="0" allowfullscreen="true"></iframe>`;
@@ -581,10 +591,6 @@
         }
 
         window.onload = () => { 
-            // Limpa lixos e erros anteriores
-            localStorage.removeItem('historias_cache_fb_oficial'); 
-            localStorage.removeItem('assistir_depois_fb');
-            
             observer.observe(document.getElementById('loader'));
             fetchContent(); 
         };
