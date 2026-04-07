@@ -3,23 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Histórias & Notícias Virais</title>
+    <title>Histórias e Novelas</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* TEMA ESCURO (Padrão) E AZUL */
         :root { --primary: #1877F2; --bg: #141414; --surface: #2f2f2f; --text: #ffffff; --text-meta: #aaaaaa; --radius-md: 8px; --border: #333; }
+        
+        /* TEMA CLARO (Quando ativado no botão do sol) */
         body.light-mode { --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
         
         .navbar { position: sticky; top: 0; background: var(--bg); opacity: 0.98; z-index: 100; padding: 15px 20px; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         .menu-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
-        .logo-container { display: flex; align-items: center; cursor: pointer; gap: 15px; }
-        .logo { font-weight: 800; font-size: 1.5rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
+        .logo-container { display: flex; align-items: center; cursor: pointer; gap: 10px; }
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--text); text-decoration: none; letter-spacing: -0.5px; }
+        
+        /* Cores Diferentes no Título */
+        .logo-historias { color: var(--primary); }
+        .logo-e { font-size: 1.1rem; color: var(--text); font-weight: 600; }
+        .logo-novelas { color: #e50914; }
 
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: none; opacity: 0; transition: 0.3s; }
         .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--bg); z-index: 2001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.2); border-right: 1px solid var(--border); }
@@ -30,11 +38,11 @@
         .side-cat:hover, .side-cat.active { background: var(--surface); color: var(--primary); }
 
         .feed-header { max-width: 1200px; margin: 20px auto 10px; padding: 0 20px; font-size: 1.2rem; font-weight: 700; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
-        .feed-count { font-size: 0.9rem; color: var(--text-meta); font-weight: normal; }
+        .feed-count { font-size: 0.9rem; color: var(--text-meta); font-weight: normal; transition: 0.3s; }
         .refresh-btn { background: none; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; transition: 0.2s; padding: 5px; margin-left: 10px; }
         .refresh-btn:active { transform: rotate(180deg) scale(0.8); }
 
-        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 90px; } /* Espaço para não sobrepor botões */
+        .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 90px; } 
         @media(max-width: 500px) { .feed { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
         
         .movie-card { background: var(--surface); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: transform 0.2s; position: relative; aspect-ratio: 2/3; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -46,28 +54,43 @@
         .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-meta); }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 10px; }
-        .modal-content { background: var(--bg); max-width: 500px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.8); max-height: 95vh; overflow-y: auto; border: 1px solid var(--border); }
+        .modal-content { background: var(--bg); max-width: 600px; width: 100%; border-radius: 16px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.8); max-height: 95vh; overflow-y: auto; border: 1px solid var(--border); }
         .close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.8); color: white; border: 1px solid rgba(255,255,255,0.2); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 10; transition: 0.2s; }
         
-        .modal-info { padding: 20px; }
+        .modal-info { padding: 20px; padding-top: 35px; }
+        
         .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 5px; color: var(--text); line-height: 1.3; margin-top: 10px; }
-        .modal-time-detail { font-size: 0.8rem; color: var(--text-meta); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid var(--border); padding-bottom: 15px;}
+        .modal-time-detail { font-size: 0.8rem; color: var(--text-meta); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
         
-        .trailer-container { position: relative; width: 100%; display: flex; justify-content: center; background: #000; border-radius: var(--radius-md); overflow: hidden; min-height: 400px;}
-        .trailer-container iframe { width: 100%; height: 550px; border: none; border-radius: 8px;}
+        /* FORMato 16:9 para o Vídeo */
+        .trailer-container { position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex; justify-content: center; align-items: center; background: #000; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 15px;}
+        .trailer-container iframe { width: 100%; height: 100%; border: none; }
         
-        .action-row { display: flex; gap: 10px; margin-top: 15px; margin-bottom: 15px; }
-        .btn-action { flex: 1; padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-next { background: #e50914; color: white; }
-        .btn-icon { background: var(--surface); color: var(--text); border: 1px solid var(--border); flex: 0.3; }
+        /* BOTÕES DE NAVEGAÇÃO & VIP */
+        .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-action { padding: 12px; border: none; border-radius: var(--radius-md); font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; text-decoration: none;}
+        
+        .btn-nav { flex: 1; background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        .btn-nav:hover { background: var(--border); }
+        .btn-nav-primary { background: var(--primary); color: white; border: none; }
+        .btn-nav-primary:hover { filter: brightness(1.1); }
 
-        .related-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
+        /* Botão VIP Dourado */
+        .vip-btn { flex: 1; background: linear-gradient(45deg, #FFD700, #F5A623); color: #141414 !important; font-weight: 800; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
+        .vip-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+        
+        /* Botão Assistir Depois */
+        #m-save-btn { flex: 1; background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        #m-save-btn.saved { background: var(--primary); color: white; border: none; }
+
+        /* Grelha "Ver Outras Histórias" */
+        .related-section { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
         .related-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
         .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         @media(max-width: 400px) { .related-grid { grid-template-columns: repeat(2, 1fr); } }
-        .related-item { cursor: pointer; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border); transition: 0.2s; }
+        .related-item { cursor: pointer; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid var(--border); transition: 0.2s; aspect-ratio: 2/3; }
         .related-item:hover { transform: scale(1.02); border-color: var(--primary); }
-        .related-item img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
+        .related-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .related-item-title { position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); color: white; width: 100%; font-size: 0.75rem; padding: 20px 5px 5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
 
         .loader { text-align: center; padding: 20px; color: var(--primary); font-size: 2rem; width: 100%; grid-column: 1/-1; opacity: 0; transition: 0.3s; min-height: 80px; }
@@ -117,7 +140,7 @@
             z-index: 900;
             backdrop-filter: blur(8px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            pointer-events: none; /* Deixa clicar no que estiver atrás */
+            pointer-events: none; 
         }
         .dev-signature p { margin: 0; line-height: 1.5; }
         .dev-signature strong { color: #fff; font-size: 0.85rem; }
@@ -127,6 +150,7 @@
             .whatsapp-btn { width: 50px; height: 50px; font-size: 28px; bottom: 15px; right: 15px; }
             .dev-signature { bottom: 15px; left: 15px; padding: 8px 12px; font-size: 0.7rem; max-width: 65%; }
             .dev-signature strong { font-size: 0.75rem; }
+            .action-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -146,14 +170,16 @@
         <button class="sidebar-close" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
         <h3><i class="fas fa-bars"></i> Menu</h3>
         <button class="side-cat active" onclick="window.location.reload()"><i class="fas fa-home"></i> Início</button>
-        <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedView()"><i class="fas fa-bookmark"></i> Minha Lista</button>
+        <button id="sidebar-bookmark-btn" class="side-cat" onclick="toggleSavedView()"><i class="fas fa-clock"></i> Assistir Depois</button>
     </div>
 
     <nav class="navbar">
         <div class="nav-top">
             <div class="logo-container">
                 <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <div class="logo" onclick="window.location.reload()">Histórias<span>Virais</span></div>
+                <div class="logo" onclick="window.location.reload()">
+                    <span class="logo-historias">Histórias</span><span class="logo-e"> e </span><span class="logo-novelas">Novelas</span>
+                </div>
             </div>
             <button class="menu-btn" onclick="toggleTheme()"><i id="theme-icon" class="fas fa-sun"></i></button>
         </div>
@@ -161,7 +187,7 @@
 
     <div class="feed-header">
         <div style="display: flex; align-items: center;">
-            <i class="fas fa-fire" style="color: #e50914; margin-right: 8px;"></i> Últimos Vídeos
+            <i class="fas fa-play-circle" style="color: var(--primary); margin-right: 8px;"></i> Últimos Vídeos
             <button class="refresh-btn" onclick="fetchContent()" title="Procurar novos vídeos"><i class="fas fa-sync-alt"></i></button>
         </div>
         <span class="feed-count" id="feed-count-label">A carregar...</span>
@@ -175,18 +201,25 @@
             <button class="close-btn" onclick="closeModal(event, true)"><i class="fas fa-times"></i></button>
             <div class="modal-info">
                 
-                <div class="trailer-container" id="m-trailer"></div>
-                
                 <h2 id="m-title" class="modal-title">Título</h2>
                 <div class="modal-time-detail" id="m-time"><i class="far fa-clock"></i> Publicado há pouco</div>
                 
+                <div class="trailer-container" id="m-trailer"></div>
+                
+                <div class="action-row" style="gap: 15px;">
+                    <button id="m-prev-btn" class="btn-action btn-nav"><i class="fas fa-step-backward"></i> Anterior</button>
+                    <button id="m-next-btn-main" class="btn-action btn-nav-primary">Próximo <i class="fas fa-step-forward"></i></button>
+                </div>
+
                 <div class="action-row">
-                    <button id="m-next-btn" class="btn-action btn-next"><i class="fas fa-step-forward"></i> Próximo</button>
-                    <button id="m-save-btn" class="btn-action btn-icon" onclick="toggleSave()"><i class="far fa-bookmark"></i></button>
+                    <button id="m-save-btn" class="btn-action" onclick="toggleSave()"><i class="fas fa-clock"></i> Assistir Depois</button>
+                    <a href="https://wa.me/258849085157?text=Olá,%20gostaria%20de%20fazer%20um%20pedido%20na%20Área%20VIP." target="_blank" class="btn-action vip-btn">
+                        <i class="fas fa-crown"></i> Área VIP (Pedidos)
+                    </a>
                 </div>
 
                 <div class="related-section" id="related-section">
-                    <div class="related-title"><i class="fas fa-list-ul"></i> Mais Vídeos:</div>
+                    <div class="related-title"><i class="fas fa-film"></i> Ver outras histórias:</div>
                     <div class="related-grid" id="m-related-grid"></div>
                 </div>
             </div>
@@ -265,7 +298,7 @@
                 }
 
                 if (!data || !data.items || !Array.isArray(data.items)) {
-                    throw new Error("Erro: Os dados não vieram no formato correto.");
+                    throw new Error("Erro de dados.");
                 }
                 
                 let cachedData = JSON.parse(localStorage.getItem('historias_cache_fb_oficial') || '[]');
@@ -325,7 +358,6 @@
                 }
 
             } catch (e) { 
-                console.error("Modo de segurança ativado:", e);
                 if(!isBackground) {
                     allItems = JSON.parse(localStorage.getItem('historias_cache_fb_oficial') || '[]');
                     if(allItems.length > 0) {
@@ -334,7 +366,7 @@
                         document.getElementById('feed').innerHTML = '';
                         loadMoreItems();
                     } else {
-                        document.getElementById('feed').innerHTML = "<div class='no-results'><i class='fas fa-exclamation-triangle'></i> Ocorreu um bloqueio temporário de segurança. Tenta novamente mais tarde.</div>";
+                        document.getElementById('feed').innerHTML = "<div class='no-results'><i class='fas fa-exclamation-triangle'></i> A procurar ligação...</div>";
                     }
                     document.getElementById('loader').style.opacity = '0';
                 }
@@ -400,7 +432,7 @@
 
         function openModal(item) {
             selectedItem = item;
-            let currentList = isSavedView ? JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]') : allItems;
+            let currentList = isSavedView ? JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]') : allItems;
             currentIndex = currentList.findIndex(x => x.guid === item.guid);
             
             let rawTitle = item.title || "Publicação";
@@ -413,18 +445,18 @@
             let linkVideo = item.link;
             let embedHtml = "";
 
-            // O Erro do clique estava aqui! O código procurava o botão removido e encravava.
-            // Agora foca-se apenas em carregar o leitor e os relacionados.
-            
             if (linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch')) {
                 const fbUrlCodificado = encodeURIComponent(linkVideo);
-                embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false&width=350" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+                embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false&width=auto" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
             } else {
-                embedHtml = `<iframe src="${linkVideo}" width="100%" height="550" frameborder="0"></iframe>`;
+                embedHtml = `<iframe src="${linkVideo}" width="100%" height="100%" frameborder="0"></iframe>`;
             }
             
             document.getElementById('m-trailer').innerHTML = embedHtml;
-            document.getElementById('m-next-btn').onclick = () => playNext(currentList);
+            
+            // Lógica dos Botões Próximo e Anterior
+            document.getElementById('m-next-btn-main').onclick = () => playNext(currentList);
+            document.getElementById('m-prev-btn').onclick = () => playPrev(currentList);
 
             const relatedContainer = document.getElementById('m-related-grid');
             relatedContainer.innerHTML = '';
@@ -452,7 +484,14 @@
 
         function playNext(list) {
             currentIndex++;
-            if (currentIndex >= list.length) { currentIndex = 0; }
+            if (currentIndex >= list.length) { currentIndex = 0; } // Volta ao início se acabar
+            openModal(list[currentIndex]);
+            document.querySelector('.modal-content').scrollTop = 0;
+        }
+
+        function playPrev(list) {
+            currentIndex--;
+            if (currentIndex < 0) { currentIndex = list.length - 1; } // Vai para o último se voltar antes do primeiro
             openModal(list[currentIndex]);
             document.querySelector('.modal-content').scrollTop = 0;
         }
@@ -466,13 +505,13 @@
         }
 
         function toggleSave() {
-            let saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+            let saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
             const idx = saved.findIndex(x => x.guid === selectedItem.guid);
             
             if(idx > -1) { saved.splice(idx, 1); } 
             else { saved.push(selectedItem); }
             
-            localStorage.setItem('historias_salvas_fb', JSON.stringify(saved));
+            localStorage.setItem('assistir_depois_fb', JSON.stringify(saved));
             updateActionBtns();
             
             if(isSavedView) {
@@ -490,19 +529,19 @@
             
             if(isSavedView) {
                 btn.classList.add('active');
-                const saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+                const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
                 document.getElementById('feed-count-label').style.display = 'none';
-                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-bookmark" style="color: var(--text);"></i> Minha Lista';
+                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-clock" style="color: var(--text);"></i> Assistir Depois';
                 document.querySelector('.refresh-btn').style.display = 'none';
                 document.getElementById('loader').style.opacity = '0';
                 
                 feed.innerHTML = '';
-                if(saved.length === 0) feed.innerHTML = "<div class='no-results'>Nenhum vídeo guardado.</div>";
+                if(saved.length === 0) feed.innerHTML = "<div class='no-results'>Nenhum vídeo guardado para assistir depois.</div>";
                 saved.forEach(item => desenharCartao(item, feed));
             } else {
                 btn.classList.remove('active');
                 document.getElementById('feed-count-label').style.display = 'block';
-                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-fire" style="color: #1877F2;"></i> Últimos Vídeos';
+                document.querySelector('.feed-header span:first-child').innerHTML = '<i class="fas fa-play-circle" style="color: var(--primary);"></i> Últimos Vídeos';
                 document.querySelector('.refresh-btn').style.display = 'inline-block';
                 
                 displayedItems = 0;
@@ -512,25 +551,20 @@
         }
 
         function updateActionBtns() {
-            const saved = JSON.parse(localStorage.getItem('historias_salvas_fb') || '[]');
+            const saved = JSON.parse(localStorage.getItem('assistir_depois_fb') || '[]');
             const isSaved = saved.some(x => x.guid === selectedItem.guid);
             const saveBtn = document.getElementById('m-save-btn');
             
             if(isSaved) { 
-                saveBtn.style.color = '#1877F2'; 
-                saveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Guardado'; 
+                saveBtn.classList.add('saved');
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvo para depois'; 
             } else { 
-                saveBtn.style.color = 'var(--text)'; 
-                saveBtn.innerHTML = '<i class="far fa-bookmark"></i> Guardar'; 
+                saveBtn.classList.remove('saved');
+                saveBtn.innerHTML = '<i class="fas fa-clock"></i> Assistir Depois'; 
             }
         }
 
         window.onload = () => { 
-            localStorage.removeItem('historias_cache_novelas');
-            localStorage.removeItem('historias_cache_novelas_v2');
-            localStorage.removeItem('historias_cache_novelas_v3');
-            localStorage.removeItem('historias_cache_novelas_v4');
-            
             observer.observe(document.getElementById('loader'));
             fetchContent(); 
         };
