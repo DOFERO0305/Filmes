@@ -77,7 +77,6 @@
             justify-content: center; 
             align-items: center; 
         }
-        .trailer-container iframe { width: 100%; height: 100%; border: none; }
         
         /* BOTÕES DE NAVEGAÇÃO & VIP */
         .action-row { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -466,14 +465,28 @@
             document.getElementById('m-time').innerHTML = `<i class="far fa-clock"></i> Publicado ${tempoStr.toLowerCase()}`;
             
             let linkVideo = item.link || "";
-            let embedHtml = "";
+            let iframeSrc = linkVideo;
+            let btnText = "Ver Link Original";
+            let btnIcon = "fa-external-link-alt";
+            let isFacebook = linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch');
 
-            if (linkVideo.includes('facebook.com') || linkVideo.includes('fb.watch')) {
+            // Preparação dinâmica do iframe para Facebook
+            if (isFacebook) {
                 const fbUrlCodificado = encodeURIComponent(linkVideo);
-                embedHtml = `<iframe src="https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
-            } else {
-                embedHtml = `<iframe src="${linkVideo}" frameborder="0" allowfullscreen="true"></iframe>`;
+                iframeSrc = `https://www.facebook.com/plugins/video.php?href=${fbUrlCodificado}&show_text=false`;
+                btnText = "Assistir no Facebook";
+                btnIcon = "fa-facebook";
             }
+
+            // Injeção da estrutura segura de fallback no modal
+            let embedHtml = `
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                    <iframe src="${iframeSrc}" style="width: 100%; flex: 1; border: none; background: #000;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                    <a href="${linkVideo}" target="_blank" style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; background: var(--surface); color: var(--text); text-decoration: none; border-top: 1px solid var(--border); font-weight: 600; font-size: 0.95rem; transition: 0.2s;">
+                        <i class="${isFacebook ? 'fab' : 'fas'} ${btnIcon}"></i> Se o vídeo não abrir, clique para ${btnText}
+                    </a>
+                </div>
+            `;
             
             document.getElementById('m-trailer').innerHTML = embedHtml;
             
